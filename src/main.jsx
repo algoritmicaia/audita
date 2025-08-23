@@ -1,0 +1,18 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './components/Pages/App'
+import { BrowserRouter } from "react-router";
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCaretUp, faMinus } from '@fortawesome/free-solid-svg-icons'
+
+// Configurar los iconos que vamos a usar
+library.add(faCaretUp, faMinus)
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
+)
