@@ -13,16 +13,56 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 function App() {
 
   const {register, handleSubmit} = useForm();
-  const [puntosMuestreo, setPuntosMuestreo] = React.useState([0]); // Inicialmente 3 puntos
+  const [puntosMuestreo, setPuntosMuestreo] = React.useState([{id: 0, displayIndex: 1}]); // Inicialmente 1 punto
+  const [animatingItems, setAnimatingItems] = React.useState(new Set()); // Para controlar animaciones
+  const [nextId, setNextId] = React.useState(1); // Para generar IDs únicos
   
   const sendData = (data) => {
     console.log(data);
   }
 
   const agregarPuntoMuestreo = () => {
-    setPuntosMuestreo(prev => [...prev, prev.length]);
+    const newId = nextId;
+    const newDisplayIndex = puntosMuestreo.length + 1;
+    const newPunto = { id: newId, displayIndex: newDisplayIndex };
+    
+    setPuntosMuestreo(prev => [...prev, newPunto]);
+    setNextId(prev => prev + 1);
+    
+    // Agregar el nuevo item a la lista de animaciones
+    setAnimatingItems(prev => new Set([...prev, newId]));
+    
+    // Auto-scroll al final después de que se renderice el nuevo elemento
+    setTimeout(() => {
+      const container = document.querySelector('.puntos-muestreo-container');
+      if (container) {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }, 50);
+    
+    // Remover la animación después de 500ms
+    setTimeout(() => {
+      setAnimatingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(newId);
+        return newSet;
+      });
+    }, 500);
   }
 
+  const eliminarPuntoMuestreo = (idToDelete) => {
+    setPuntosMuestreo(prev => {
+      const filtered = prev.filter(punto => punto.id !== idToDelete);
+      // Reordenar los displayIndex para que sean consecutivos
+      return filtered.map((punto, index) => ({
+        ...punto,
+        displayIndex: index + 1
+      }));
+    });
+  }
 
   return (
     <>
@@ -92,9 +132,20 @@ function App() {
 
               <div className="">
                 <InputForm
+                  id="codigo_postal"
+                  type="text"
+                  labelText="CP"
+                  placeholder="Ingresa el código postal"
+                  required={true}
+                  register={register}
+                />
+              </div>
+
+              <div className="">
+                <InputForm
                   id="horarios"
                   useArea={true}
-                  labelText="Horarios"
+                  labelText="Horarios/Turnos habituales de la empresa"
                   placeholder="Ingresa los horarios de la empresa"
                   required={true}
                   register={register}
@@ -188,21 +239,28 @@ function App() {
                 register={register}
               />
 
-              <InputForm
-                id="hora_inicio_medicion"
-                type="time"
-                labelText="Hora de inicio de la medición"
-                required={true}
-                register={register}
-              />
+              <div className="space-y-4 flex gap-4">
+                <div className="flex-1">
+                  <InputForm
+                    id="hora_inicio_medicion"
+                    type="time"
+                    labelText="Hora de inicio de la medición"
+                    required={true}
+                    register={register}
+                  />
+               </div>
 
-              <InputForm
-                id="hora_fin_medicion"
-                type="time"
-                labelText="Hora de finalización"
-                required={true}
-                register={register}
-              />
+               <div className="flex-1">
+                  <InputForm
+                    id="hora_fin_medicion"
+                    type="time"
+                    labelText="Hora de finalización"
+                    required={true}
+                    register={register}
+                  />
+                </div>
+
+              </div>
 
               <InputForm
                 id="condiciones_atmosfericas"
@@ -217,19 +275,35 @@ function App() {
 
           <Section title={'Puntos de muestreo'}>
             {/* Contenedor scrolleable para los puntos de muestreo */}
-            <div className="max-h-96 overflow-y-auto space-y-4 pr-2">
-              {puntosMuestreo.map((index) => (
-                <PuntoMuestreo key={index} register={register} index={index}/>
+            <div className="puntos-muestreo-container max-h-[500px] overflow-y-auto space-y-4 pr-2 mb-4">
+              {puntosMuestreo.map((punto) => (
+                <div
+                  key={punto.id}
+                  className={`transition-all duration-125 ease-out ${
+                    animatingItems.has(punto.id)
+                      ? 'opacity-0 transform -translate-y-4 scale-95'
+                      : 'opacity-100 transform translate-y-0 scale-100'
+                  }`}
+                >
+                  <PuntoMuestreo 
+                     register={register} 
+                     id={punto.id}
+                     displayIndex={punto.displayIndex}
+                     onDelete={eliminarPuntoMuestreo}
+                     showDeleteButton={puntosMuestreo.length > 1}
+                   />
+                </div>
               ))}
+
+              <InputForm
+                  id="punto_muestreo_observaciones"
+                  useArea={true}
+                  labelText="Observaciones"
+                  required={true}
+                  register={register}
+                />
             </div>
 
-            <InputForm
-                id="observaciones_puntos_muestreo"
-                useArea={true}
-                labelText="Observaciones"
-                required={true}
-                register={register}
-              />
             
             {/* Botón para agregar más puntos de muestreo */}
             <div className="mt-6">

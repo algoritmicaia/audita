@@ -1,8 +1,10 @@
 import React from 'react'
 import InputForm from './InputForm'
 import SelectForm from './SelectForm'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-export const PuntoMuestreo = ({register, index = 0}) => {
+export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDeleteButton = true}) => {
 
     const tiposIluminacion = [
         { value: "Natural", label: "Natural" },
@@ -22,13 +24,31 @@ export const PuntoMuestreo = ({register, index = 0}) => {
         { value: "Mixta", label: "Mixta" }
       ];
 
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(id);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-        <h1>Punto de muestreo {index + 1}</h1>
+    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 relative">
+        {/* Botón de eliminar */}
+        {showDeleteButton && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md hover:shadow-lg"
+            title="Eliminar punto de muestreo"
+          >
+            <FontAwesomeIcon icon={faTimes} className="text-sm" />
+          </button>
+        )}
+        
+        <h1 className="pr-10">Punto de muestreo {displayIndex}</h1>
         <div className="flex gap-4 mb-6">
             <div className="flex-1">
                 <InputForm
-                id={`hora_${index}`}
+                id={`punto_muestreo_${id}_hora`}
                 type="time"
                 labelText="Hora"
                 placeholder="Ingresa la hora del muestreo"
@@ -38,7 +58,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`sector_${index}`}
+                id={`punto_muestreo_${id}_sector`}
                 type="text"
                 labelText="Sector"
                 placeholder="Ingresa el nombre del sector"
@@ -48,7 +68,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`seccion_${index}`}
+                id={`punto_muestreo_${id}_seccion`}
                 type="text"
                 labelText="Sección/tipo/puesto"
                 placeholder="Ingresa el nombre de la seccion, tipo o puesto"
@@ -62,7 +82,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
         <div className="flex gap-4 mb-6">
             <div className="flex-1">
                 <SelectForm
-                id={`tipo_iluminacion_${index}`}
+                id={`punto_muestreo_${id}_tipo_iluminacion`}
                 labelText="Tipo de iluminación"
                 options={tiposIluminacion}
                 required={true}
@@ -71,7 +91,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
             </div>
             <div className="flex-1">
             <SelectForm
-                id={`tipo_fuente_${index}`}
+                id={`punto_muestreo_${id}_tipo_fuente`}
                 labelText="Tipo de fuente"
                 options={tiposFuente}
                 required={true}
@@ -80,7 +100,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
             </div>
             <div className="flex-1">
             <SelectForm
-                id={`iluminacion_${index}`}
+                id={`punto_muestreo_${id}_iluminacion`}
                 labelText="Iluminación"
                 options={iluminaciones}
                 required={true}
@@ -94,7 +114,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
         <div className="flex gap-4">
             <div className="flex-1">
                 <InputForm
-                id={`uniformidad_luminancia_${index}`}
+                id={`punto_muestreo_${id}_uniformidad_luminancia`}
                 type="text"
                 labelText="Uniformidad de luminancia"
                 placeholder="Ingresa la uniformidad de luminancia"
@@ -104,7 +124,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`valor_medio_${index}`}
+                id={`punto_muestreo_${id}_valor_medio`}
                 type="text"
                 labelText="Valor medio (Lux)"
                 placeholder="Ingresa el valor medio en Lux"
@@ -114,7 +134,7 @@ export const PuntoMuestreo = ({register, index = 0}) => {
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`valor_requerido_${index}`}
+                id={`punto_muestreo_${id}_valor_requerido`}
                 type="text"
                 labelText="Valor requerido"
                 placeholder="Valor requerido legalmente"
