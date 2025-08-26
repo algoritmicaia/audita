@@ -48,7 +48,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         <div className="flex gap-4 mb-6">
             <div className="flex-1">
                 <InputForm
-                id={`punto_muestreo_${id}_hora`}
+                id={`sampling_point_${id}_time`}
                 type="time"
                 labelText="Hora"
                 placeholder="Ingresa la hora del muestreo"
@@ -58,7 +58,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`punto_muestreo_${id}_sector`}
+                id={`sampling_point_${id}_sector`}
                 type="text"
                 labelText="Sector"
                 placeholder="Ingresa el nombre del sector"
@@ -68,7 +68,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`punto_muestreo_${id}_seccion`}
+                id={`sampling_point_${id}_section`}
                 type="text"
                 labelText="Sección/tipo/puesto"
                 placeholder="Ingresa el nombre de la seccion, tipo o puesto"
@@ -82,7 +82,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         <div className="flex gap-4 mb-6">
             <div className="flex-1">
                 <SelectForm
-                id={`punto_muestreo_${id}_tipo_iluminacion`}
+                id={`sampling_point_${id}_illumination_type`}
                 labelText="Tipo de iluminación"
                 options={tiposIluminacion}
                 required={true}
@@ -91,7 +91,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             </div>
             <div className="flex-1">
             <SelectForm
-                id={`punto_muestreo_${id}_tipo_fuente`}
+                id={`sampling_point_${id}_source_type`}
                 labelText="Tipo de fuente"
                 options={tiposFuente}
                 required={true}
@@ -100,7 +100,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             </div>
             <div className="flex-1">
             <SelectForm
-                id={`punto_muestreo_${id}_iluminacion`}
+                id={`sampling_point_${id}_illumination`}
                 labelText="Iluminación"
                 options={iluminaciones}
                 required={true}
@@ -114,7 +114,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         <div className="flex gap-4">
             <div className="flex-1">
                 <InputForm
-                id={`punto_muestreo_${id}_uniformidad_luminancia`}
+                id={`sampling_point_${id}_luminance_uniformity`}
                 type="text"
                 labelText="Uniformidad de luminancia"
                 placeholder="Ingresa la uniformidad de luminancia"
@@ -124,7 +124,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`punto_muestreo_${id}_valor_medio`}
+                id={`sampling_point_${id}_average_value`}
                 type="text"
                 labelText="Valor medio (Lux)"
                 placeholder="Ingresa el valor medio en Lux"
@@ -134,7 +134,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`punto_muestreo_${id}_valor_requerido`}
+                id={`sampling_point_${id}_required_value`}
                 type="text"
                 labelText="Valor requerido"
                 placeholder="Valor requerido legalmente"

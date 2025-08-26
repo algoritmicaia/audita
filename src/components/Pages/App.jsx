@@ -12,13 +12,165 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function App() {
 
-  const {register, handleSubmit} = useForm();
-  const [puntosMuestreo, setPuntosMuestreo] = React.useState([{id: 0, displayIndex: 1}]); // Inicialmente 1 punto
+  const {register, handleSubmit, getValues} = useForm();
+  const [puntosMuestreo, setPuntosMuestreo] = React.useState([]); // Inicialmente 1 punto
   const [animatingItems, setAnimatingItems] = React.useState(new Set()); // Para controlar animaciones
-  const [nextId, setNextId] = React.useState(1); // Para generar IDs únicos
+  const [nextId, setNextId] = React.useState(0); // Para generar IDs únicos
+  const [isAutoSaving, setIsAutoSaving] = React.useState(false); // Estado para mostrar feedback de autoguardado
   
   const sendData = (data) => {
-    console.log(data);
+    console.log(data)
+    
+    // Procesar los datos para estructurar los puntos de muestreo
+    const processedData = processFormData(data);
+    
+    fetch('/api/ilumination_protocol', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(processedData)
+    })
+  }
+
+  // Función de autoguardado
+  const autoSave = async () => {
+    if (isAutoSaving) return; // Evitar múltiples llamadas simultáneas
+    
+    setIsAutoSaving(true);
+    
+    try {
+      const formData = getValues(); // Obtiene todos los valores del formulario
+      
+      // Procesar los datos para estructurar los puntos de muestreo
+      const processedData = processFormData(formData);
+      
+      console.log('Autoguardando:', processedData);
+      
+      // Enviar los datos al servidor (puedes usar el mismo endpoint o crear uno específico para autoguardado)
+      const response = await fetch('/api/ilumination_protocol', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(processedData)
+      });
+      
+      if (response.ok) {
+        console.log('Autoguardado exitoso');
+      } else {
+        console.error('Error en autoguardado:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error en autoguardado:', error);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }
+
+  // Función para procesar los datos del formulario y estructurar los puntos de muestreo
+  const processFormData = (formData) => {
+    const processedData = { ...formData };
+    
+    // Validar y transformar tipos de datos
+    if (processedData.license_number) {
+      const licenseNum = parseInt(processedData.license_number);
+      processedData.license_number = isNaN(licenseNum) ? null : licenseNum;
+    } else {
+      processedData.license_number = null;
+    }
+    
+    // Limpiar fechas vacías
+    if (!processedData.calibration_date || processedData.calibration_date === '') {
+      processedData.calibration_date = null;
+    }
+    if (!processedData.measurement_date || processedData.measurement_date === '') {
+      processedData.measurement_date = null;
+    }
+    
+    // Limpiar tiempos vacíos
+    if (!processedData.measurement_start_time || processedData.measurement_start_time === '') {
+      processedData.measurement_start_time = null;
+    }
+    if (!processedData.measurement_end_time || processedData.measurement_end_time === '') {
+      processedData.measurement_end_time = null;
+    }
+    
+    // Limpiar campos de texto vacíos
+    const textFields = [
+      'company_name', 'tax_id', 'address', 'city', 'state', 'postal_code', 'working_hours',
+      'first_name', 'last_name', 'instrument_model_serial', 'methodology', 'atmospheric_conditions',
+      'sampling_observations', 'conclusions', 'recommendations'
+    ];
+    
+    textFields.forEach(field => {
+      if (!processedData[field] || processedData[field] === '') {
+        processedData[field] = null;
+      }
+    });
+    
+    // Extraer y estructurar los puntos de muestreo
+    const samplingPoints = [];
+    
+    puntosMuestreo.forEach((punto) => {
+      const samplingPoint = {
+        time: formData[`sampling_point_${punto.id}_time`] || null,
+        sector: formData[`sampling_point_${punto.id}_sector`] || null,
+        section: formData[`sampling_point_${punto.id}_section`] || null,
+        illumination_type: formData[`sampling_point_${punto.id}_illumination_type`] || null,
+        source_type: formData[`sampling_point_${punto.id}_source_type`] || null,
+        illumination: formData[`sampling_point_${punto.id}_illumination`] || null,
+        luminance_uniformity: formData[`sampling_point_${punto.id}_luminance_uniformity`] || null,
+        average_value: formData[`sampling_point_${punto.id}_average_value`] || null,
+        required_value: formData[`sampling_point_${punto.id}_required_value`] || null
+      };
+      
+      // Solo agregar el punto si tiene al menos un campo con datos
+      if (Object.values(samplingPoint).some(value => value !== null && value !== '')) {
+        samplingPoints.push(samplingPoint);
+      }
+    });
+    
+    // Asignar la lista de puntos de muestreo procesados
+    processedData.sampling_points = samplingPoints;
+    
+    // Eliminar los campos individuales de puntos de muestreo del objeto principal
+    puntosMuestreo.forEach((punto) => {
+      delete processedData[`sampling_point_${punto.id}_time`];
+      delete processedData[`sampling_point_${punto.id}_sector`];
+      delete processedData[`sampling_point_${punto.id}_section`];
+      delete processedData[`sampling_point_${punto.id}_illumination_type`];
+      delete processedData[`sampling_point_${punto.id}_source_type`];
+      delete processedData[`sampling_point_${punto.id}_illumination`];
+      delete processedData[`sampling_point_${punto.id}_luminance_uniformity`];
+      delete processedData[`sampling_point_${punto.id}_average_value`];
+      delete processedData[`sampling_point_${punto.id}_required_value`];
+    });
+    
+    return processedData;
+  }
+
+  // Wrapper para register que incluye autoguardado en onBlur
+  const registerWithAutoSave = (name, options = {}) => {
+    const registeredField = register(name, options);
+    
+    return {
+      ...registeredField,
+      onBlur: (e) => {
+        // Llamar el onBlur original si existe
+        if (registeredField.onBlur) {
+          registeredField.onBlur(e);
+        }
+        // Ejecutar autoguardado con un pequeño delay para asegurar que el valor se actualice
+        setTimeout(() => {
+          autoSave();
+        }, 100);
+      }
+    };
   }
 
   const agregarPuntoMuestreo = () => {
@@ -75,23 +227,23 @@ function App() {
             <div className="space-y-4 flex gap-4">
               <div className="flex-1">
                 <InputForm
-                  id="razon_social"
+                  id="company_name"
                   type="text"
                   labelText="Razón social"
                   placeholder="Ingresa la razón social de la empresa"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
 
               <div className="flex-1">
                 <InputForm
-                  id="cuit"
+                  id="tax_id"
                   type="number"
                   labelText="CUIT"
                   placeholder="Ingresa el cuit de la empresa"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
             </div>
@@ -99,56 +251,56 @@ function App() {
             <div className="space-y-4 gap-4">
               <div className="">
                 <InputForm
-                  id="direccion"
+                  id="address"
                   type="text"
                   labelText="Dirección"
                   placeholder="Ingresa la dirección de la empresa"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
 
               <div className="">
                 <InputForm
-                  id="localidad"
+                  id="city"
                   type="text"
                   labelText="Localidad"
                   placeholder="Ingresa la localidad de la empresa"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
 
               <div className="">
                 <InputForm
-                  id="provincia"
+                  id="state"
                   type="text"
                   labelText="Provincia"
                   placeholder="Ingresa la provincia de la empresa"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
 
               <div className="">
                 <InputForm
-                  id="codigo_postal"
+                  id="postal_code"
                   type="text"
                   labelText="CP"
                   placeholder="Ingresa el código postal"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
 
               <div className="">
                 <InputForm
-                  id="horarios"
+                  id="working_hours"
                   useArea={true}
                   labelText="Horarios/Turnos habituales de la empresa"
                   placeholder="Ingresa los horarios de la empresa"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
               </div>
 
@@ -161,23 +313,23 @@ function App() {
               <div className="flex gap-4">
                 <div className="flex-1">
                   <InputForm
-                    id="nombre"
+                    id="first_name"
                     type="text"
                     labelText="Nombre"
                     placeholder="Ingresa tu nombre"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
 
                 </div>
                 <div className="flex-1">
                   <InputForm
-                    id="apellido"
+                    id="last_name"
                     type="text"
                     labelText="Apellido"
                     placeholder="Ingresa tu apellido"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
 
                 </div>
@@ -185,12 +337,12 @@ function App() {
               </div>
 
               <InputForm
-                id="matricula"
+                id="license_number"
                 type="number"
                 labelText="Matrícula"
                 placeholder="Ingresa tu matricula profesional"
                 required={true}
-                register={register}
+                register={registerWithAutoSave}
               />
 
             </div>
@@ -201,73 +353,73 @@ function App() {
               <div className="flex gap-4">
                 <div className="flex-1">
                   <InputForm
-                    id="marca_modelo_nro_serie"
+                    id="instrument_model_serial"
                     type="text"
                     labelText="Instrumento"
                     placeholder="Marca, modelo, nro de serie"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
                 </div>
 
                 <div className="flex-1">
                   <InputForm
-                    id="fecha_calibracion"
+                    id="calibration_date"
                     type="date"
                     labelText="Fecha de calibración"
                     placeholder="Ingresa la fecha de calibracion de tu equipo"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
               </div>
               </div>
 
               <InputForm
-                id="metodologia"
+                id="methodology"
                 useArea={true}
                 labelText="Metodología utilizada"
                 placeholder="Ingresa la metodología utilizada"
                 required={true}
-                register={register}
+                register={registerWithAutoSave}
               />
 
               <InputForm
-                id="fecha_medicion"
+                id="measurement_date"
                 type="date"
                 labelText="Fecha de la medición"
                 required={true}
-                register={register}
+                register={registerWithAutoSave}
               />
 
               <div className="space-y-4 flex gap-4">
                 <div className="flex-1">
                   <InputForm
-                    id="hora_inicio_medicion"
+                    id="measurement_start_time"
                     type="time"
                     labelText="Hora de inicio de la medición"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
                </div>
 
                <div className="flex-1">
                   <InputForm
-                    id="hora_fin_medicion"
+                    id="measurement_end_time"
                     type="time"
                     labelText="Hora de finalización"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
                 </div>
 
               </div>
 
               <InputForm
-                id="condiciones_atmosfericas"
+                id="atmospheric_conditions"
                 useArea={true}
                 labelText="Condiciones atmosféricas"
                 required={true}
-                register={register}
+                register={registerWithAutoSave}
               />
 
             </div>
@@ -286,21 +438,20 @@ function App() {
                   }`}
                 >
                   <PuntoMuestreo 
-                     register={register} 
+                     register={registerWithAutoSave} 
                      id={punto.id}
                      displayIndex={punto.displayIndex}
                      onDelete={eliminarPuntoMuestreo}
-                     showDeleteButton={puntosMuestreo.length > 1}
                    />
                 </div>
               ))}
 
               <InputForm
-                  id="punto_muestreo_observaciones"
+                  id="sampling_observations"
                   useArea={true}
                   labelText="Observaciones"
                   required={true}
-                  register={register}
+                  register={registerWithAutoSave}
                 />
             </div>
 
@@ -322,35 +473,46 @@ function App() {
           <Section title={'Conclusiones y recomendaciones'}>
             <div className="space-y-4">
                   <InputForm
-                    id="conclusioens"
+                    id="conclusions"
                     useArea={true}
                     labelText="Conclusiones"
                     placeholder="Escribe tus conclusiones"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
 
                   <InputForm
-                    id="recomendaciones"
+                    id="recommendations"
                     useArea={true}
                     labelText="Recomendaciones"
                     placeholder="Escribe tus recomendaciones"
                     required={true}
-                    register={register}
+                    register={registerWithAutoSave}
                   />
 
             </div>
           </Section>
 
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
-            <Button type="submit" variant="primary">
-              Enviar
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            {/* Indicador de autoguardado */}
+            <div className="flex items-center text-sm text-gray-500">
+              {isAutoSaving && (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                  Guardando automáticamente...
+                </>
+              )}
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <Button type="submit" variant="primary">
+                Enviar
+              </Button>
+            </div>
           </div>
 
         </Form>
       </div>
-
 
       <Footer />
 
