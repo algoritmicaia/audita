@@ -6,23 +6,112 @@ import InputForm from "../Ui/InputForm"
 import Button from "../Ui/Button"
 import Section from "../Ui/Section"
 import { useForm } from "react-hook-form"
+import { useEffect, useState } from 'react'
 import PuntoMuestreo from "../Ui/PuntoMuestreo"
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { processFormData } from '../../utils'
 
 function App() {
 
-  const {register, handleSubmit, getValues} = useForm();
-  const [puntosMuestreo, setPuntosMuestreo] = React.useState([]); // Inicialmente 1 punto
-  const [animatingItems, setAnimatingItems] = React.useState(new Set()); // Para controlar animaciones
-  const [nextId, setNextId] = React.useState(0); // Para generar IDs únicos
-  const [isAutoSaving, setIsAutoSaving] = React.useState(false); // Estado para mostrar feedback de autoguardado
+  const {register, handleSubmit, getValues, setValue} = useForm();
+  const [puntosMuestreo, setPuntosMuestreo] = useState([]);
+  const [animatingItems, setAnimatingItems] = useState(new Set()); // Para controlar animaciones
+  const [nextId, setNextId] = useState(0); // Para generar IDs únicos
+  const [isAutoSaving, setIsAutoSaving] = useState(false); // Estado para mostrar feedback de autoguardado
+  const [isLoading, setIsLoading] = useState(true); // Estado para mostrar loading mientras se cargan los datos
   
+
+  
+  useEffect(() => {
+    const loadExistingData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/ilumination_protocol', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          // Si hay datos existentes, poblar los campos del formulario
+          if (data && data.result !== 'ok') {
+            // Datos de la empresa
+            if (data.company_name) setValue('company_name', data.company_name);
+            if (data.tax_id) setValue('tax_id', data.tax_id);
+            if (data.address) setValue('address', data.address);
+            if (data.city) setValue('city', data.city);
+            if (data.state) setValue('state', data.state);
+            if (data.postal_code) setValue('postal_code', data.postal_code);
+            if (data.working_hours) setValue('working_hours', data.working_hours);
+
+            // Datos del responsable
+            if (data.first_name) setValue('first_name', data.first_name);
+            if (data.last_name) setValue('last_name', data.last_name);
+            if (data.license_number) setValue('license_number', data.license_number);
+
+            // Datos de la medición
+            if (data.instrument_model_serial) setValue('instrument_model_serial', data.instrument_model_serial);
+            if (data.calibration_date) setValue('calibration_date', data.calibration_date);
+            if (data.methodology) setValue('methodology', data.methodology);
+            if (data.measurement_date) setValue('measurement_date', data.measurement_date);
+            if (data.measurement_start_time) setValue('measurement_start_time', data.measurement_start_time);
+            if (data.measurement_end_time) setValue('measurement_end_time', data.measurement_end_time);
+            if (data.atmospheric_conditions) setValue('atmospheric_conditions', data.atmospheric_conditions);
+
+            // Observaciones de puntos de muestreo
+            if (data.sampling_observations) setValue('sampling_observations', data.sampling_observations);
+
+            // Conclusiones y recomendaciones
+            if (data.conclusions) setValue('conclusions', data.conclusions);
+            if (data.recommendations) setValue('recommendations', data.recommendations);
+
+            // Cargar puntos de muestreo si existen
+            if (data.sampling_points && data.sampling_points.length > 0) {
+              const puntos = data.sampling_points.map((punto, index) => ({
+                id: index,
+                displayIndex: index + 1
+              }));
+              setPuntosMuestreo(puntos);
+              setNextId(puntos.length);
+
+              // Poblar los campos de cada punto de muestreo
+              data.sampling_points.forEach((punto, index) => {
+                if (punto.time) setValue(`sampling_points.${index}.time`, punto.time);
+                if (punto.sector) setValue(`sampling_points.${index}.sector`, punto.sector);
+                if (punto.section) setValue(`sampling_points.${index}.section`, punto.section);
+                if (punto.illumination_type) setValue(`sampling_points.${index}.illumination_type`, punto.illumination_type);
+                if (punto.source_type) setValue(`sampling_points.${index}.source_type`, punto.source_type);
+                if (punto.illumination) setValue(`sampling_points.${index}.illumination`, punto.illumination);
+                if (punto.luminance_uniformity) setValue(`sampling_points.${index}.luminance_uniformity`, punto.luminance_uniformity);
+                if (punto.average_value) setValue(`sampling_points.${index}.average_value`, punto.average_value);
+                if (punto.required_value) setValue(`sampling_points.${index}.required_value`, punto.required_value);
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error cargando datos existentes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadExistingData();
+  }, [setValue]);
+
+
+
   const sendData = (data) => {
     console.log(data)
     
     // Procesar los datos para estructurar los puntos de muestreo
-    const processedData = processFormData(data);
+    const processedData = processFormData(data, puntosMuestreo);
     
     fetch('/api/ilumination_protocol', {
       method: 'POST',
@@ -45,7 +134,7 @@ function App() {
       const formData = getValues(); // Obtiene todos los valores del formulario
       
       // Procesar los datos para estructurar los puntos de muestreo
-      const processedData = processFormData(formData);
+      const processedData = processFormData(formData, puntosMuestreo);
       
       console.log('Autoguardando:', processedData);
       
@@ -70,88 +159,6 @@ function App() {
     } finally {
       setIsAutoSaving(false);
     }
-  }
-
-  // Función para procesar los datos del formulario y estructurar los puntos de muestreo
-  const processFormData = (formData) => {
-    const processedData = { ...formData };
-    
-    // Validar y transformar tipos de datos
-    if (processedData.license_number) {
-      const licenseNum = parseInt(processedData.license_number);
-      processedData.license_number = isNaN(licenseNum) ? null : licenseNum;
-    } else {
-      processedData.license_number = null;
-    }
-    
-    // Limpiar fechas vacías
-    if (!processedData.calibration_date || processedData.calibration_date === '') {
-      processedData.calibration_date = null;
-    }
-    if (!processedData.measurement_date || processedData.measurement_date === '') {
-      processedData.measurement_date = null;
-    }
-    
-    // Limpiar tiempos vacíos
-    if (!processedData.measurement_start_time || processedData.measurement_start_time === '') {
-      processedData.measurement_start_time = null;
-    }
-    if (!processedData.measurement_end_time || processedData.measurement_end_time === '') {
-      processedData.measurement_end_time = null;
-    }
-    
-    // Limpiar campos de texto vacíos
-    const textFields = [
-      'company_name', 'tax_id', 'address', 'city', 'state', 'postal_code', 'working_hours',
-      'first_name', 'last_name', 'instrument_model_serial', 'methodology', 'atmospheric_conditions',
-      'sampling_observations', 'conclusions', 'recommendations'
-    ];
-    
-    textFields.forEach(field => {
-      if (!processedData[field] || processedData[field] === '') {
-        processedData[field] = null;
-      }
-    });
-    
-    // Extraer y estructurar los puntos de muestreo
-    const samplingPoints = [];
-    
-    puntosMuestreo.forEach((punto) => {
-      const samplingPoint = {
-        time: formData[`sampling_point_${punto.id}_time`] || null,
-        sector: formData[`sampling_point_${punto.id}_sector`] || null,
-        section: formData[`sampling_point_${punto.id}_section`] || null,
-        illumination_type: formData[`sampling_point_${punto.id}_illumination_type`] || null,
-        source_type: formData[`sampling_point_${punto.id}_source_type`] || null,
-        illumination: formData[`sampling_point_${punto.id}_illumination`] || null,
-        luminance_uniformity: formData[`sampling_point_${punto.id}_luminance_uniformity`] || null,
-        average_value: formData[`sampling_point_${punto.id}_average_value`] || null,
-        required_value: formData[`sampling_point_${punto.id}_required_value`] || null
-      };
-      
-      // Solo agregar el punto si tiene al menos un campo con datos
-      if (Object.values(samplingPoint).some(value => value !== null && value !== '')) {
-        samplingPoints.push(samplingPoint);
-      }
-    });
-    
-    // Asignar la lista de puntos de muestreo procesados
-    processedData.sampling_points = samplingPoints;
-    
-    // Eliminar los campos individuales de puntos de muestreo del objeto principal
-    puntosMuestreo.forEach((punto) => {
-      delete processedData[`sampling_point_${punto.id}_time`];
-      delete processedData[`sampling_point_${punto.id}_sector`];
-      delete processedData[`sampling_point_${punto.id}_section`];
-      delete processedData[`sampling_point_${punto.id}_illumination_type`];
-      delete processedData[`sampling_point_${punto.id}_source_type`];
-      delete processedData[`sampling_point_${punto.id}_illumination`];
-      delete processedData[`sampling_point_${punto.id}_luminance_uniformity`];
-      delete processedData[`sampling_point_${punto.id}_average_value`];
-      delete processedData[`sampling_point_${punto.id}_required_value`];
-    });
-    
-    return processedData;
   }
 
   // Wrapper para register que incluye autoguardado en onBlur
@@ -221,7 +228,15 @@ function App() {
       <Header title={'Audita'}/>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Form onSubmit={handleSubmit(sendData)}>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <span className="text-lg text-gray-600">Cargando datos existentes...</span>
+            </div>
+          </div>
+        ) : (
+          <Form onSubmit={handleSubmit(sendData)}>
           <Section title={'Datos de la empresa'} collapse={false}>
 
             <div className="space-y-4 flex gap-4">
@@ -511,7 +526,8 @@ function App() {
             </div>
           </div>
 
-        </Form>
+          </Form>
+        )}
       </div>
 
       <Footer />
