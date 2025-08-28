@@ -21,8 +21,6 @@ function App() {
   const [isAutoSaving, setIsAutoSaving] = useState(false); // Estado para mostrar feedback de autoguardado
   const [isLoading, setIsLoading] = useState(true); // Estado para mostrar loading mientras se cargan los datos
   
-
-  
   useEffect(() => {
     const loadExistingData = async () => {
       try {
@@ -105,7 +103,6 @@ function App() {
 
     loadExistingData();
   }, [setValue]);
-
 
   const sendData = (data) => {
     console.log(data)
@@ -190,18 +187,7 @@ function App() {
     
     // Agregar el nuevo item a la lista de animaciones
     setAnimatingItems(prev => new Set([...prev, newId]));
-    
-    // Auto-scroll al final después de que se renderice el nuevo elemento
-    setTimeout(() => {
-      const container = document.querySelector('.puntos-muestreo-container');
-      if (container) {
-        container.scrollTo({
-          top: container.scrollHeight,
-          behavior: 'smooth'
-        });
-      }
-    }, 50);
-    
+       
     // Remover la animación después de 500ms
     setTimeout(() => {
       setAnimatingItems(prev => {
@@ -240,6 +226,40 @@ function App() {
     });
   }
 
+  const downloadPDF = async() => {
+    expandAllSections();
+    
+    // Pequeño delay para asegurar que las secciones se desplieguen antes de imprimir
+    setTimeout(() => {
+      window.print()
+    }, 100)
+  }
+
+  const [sectionsCollapse, setSectionsCollapse] = useState({
+    empresa: false,
+    responsable: true,
+    medicion: true,
+    puntosMuestreo: true,
+    conclusiones: true
+  });
+
+  const toggleSection = (sectionName) => {
+    setSectionsCollapse(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  };
+
+  const expandAllSections = () => {
+    setSectionsCollapse({
+      empresa: false,
+      responsable: false,
+      medicion: false,
+      puntosMuestreo: false,
+      conclusiones: false
+    });
+  };
+
   return (
     <>
       <Header title={'Audita'}/>
@@ -254,7 +274,11 @@ function App() {
           </div>
         ) : (
           <Form onSubmit={handleSubmit(sendData)}>
-          <Section title={'Datos de la empresa'} collapse={false}>
+          <Section 
+            title={'Datos de la empresa'} 
+            isCollapsed={sectionsCollapse.empresa}
+            onToggle={() => toggleSection('empresa')}
+          >
 
             <div className="space-y-4 flex gap-4">
               <div className="flex-1">
@@ -340,7 +364,14 @@ function App() {
 
           </Section>
 
-          <Section title={'Datos del responsable'}>
+          <div className='break-before-page'>
+          </div>
+
+          <Section 
+            title={'Datos del responsable'} 
+            isCollapsed={sectionsCollapse.responsable}
+            onToggle={() => toggleSection('responsable')}
+          >
             <div className="space-y-4">
               <div className="flex gap-4">
                 <div className="flex-1">
@@ -380,7 +411,11 @@ function App() {
             </div>
           </Section>
 
-          <Section title={'Datos de la medición'}>
+          <Section 
+            title={'Datos de la medición'} 
+            isCollapsed={sectionsCollapse.medicion}
+            onToggle={() => toggleSection('medicion')}
+          >
             <div className="space-y-4">
               <div className="flex gap-4">
                 <div className="flex-1">
@@ -457,9 +492,16 @@ function App() {
             </div>
           </Section>
 
-          <Section title={'Puntos de muestreo'}>
+          <div className='break-before-page'>
+          </div>
+          
+          <Section 
+            title={'Puntos de muestreo'} 
+            isCollapsed={sectionsCollapse.puntosMuestreo}
+            onToggle={() => toggleSection('puntosMuestreo')}
+          >
             {/* Contenedor scrolleable para los puntos de muestreo */}
-            <div className="puntos-muestreo-container max-h-[500px] overflow-y-auto space-y-4 pr-2 mb-4">
+            <div className="puntos-muestreo-container space-y-4 pr-2 mb-4">
               {puntosMuestreo.map((punto) => (
                 <div
                   key={punto.id}
@@ -494,7 +536,7 @@ function App() {
                 type="button" 
                 variant="success" 
                 onClick={agregarPuntoMuestreo}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 print:hidden"
               >
                 <FontAwesomeIcon icon={faPlus} />
                 Añadir punto de muestreo
@@ -502,7 +544,11 @@ function App() {
             </div>
           </Section>
 
-          <Section title={'Conclusiones y recomendaciones'}>
+          <Section 
+            title={'Conclusiones y recomendaciones'} 
+            isCollapsed={sectionsCollapse.conclusiones}
+            onToggle={() => toggleSection('conclusiones')}
+          >
             <div className="space-y-4">
                   <InputForm
                     id="conclusions"
@@ -536,9 +582,9 @@ function App() {
               )}
             </div>
             
-            <div className="flex items-center space-x-3">
-              <Button type="submit" variant="primary">
-                Enviar
+            <div className="flex items-center space-x-3 print:hidden">
+              <Button type="submit" variant="primary" onClick={downloadPDF}>
+                Descargar PDF
               </Button>
             </div>
           </div>
@@ -553,4 +599,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

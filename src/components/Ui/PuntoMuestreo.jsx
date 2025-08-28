@@ -31,13 +31,13 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 relative">
+    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 relative break-inside-avoid">
         {/* Botón de eliminar */}
         {showDeleteButton && (
           <button
             type="button"
             onClick={handleDelete}
-            className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md hover:shadow-lg print:hidden"
             title="Eliminar punto de muestreo"
           >
             <FontAwesomeIcon icon={faTimes} className="text-sm" />

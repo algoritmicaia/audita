@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 
-export const Section = ({title, children, collapse=true}) => {
-  const [isCollapsed, setIsCollapsed] = useState(collapse);
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+export const Section = ({title, children, isCollapsed, onToggle}) => {
+  const handleCollapse = () => {
+    if (onToggle) {
+      onToggle();
+    }
   };
 
   return (
     <section className="mb-8">
         <h1 
           className="text-2xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-2 cursor-pointer transition-colors duration-200 flex items-center justify-between"
-          onClick={toggleCollapse}
+          onClick={handleCollapse}
         >
           {title}
           <span className="text-lg text-gray-500 transition-transform duration-200">
@@ -21,7 +21,7 @@ export const Section = ({title, children, collapse=true}) => {
           </span>
         </h1>
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isCollapsed ? 'max-h-0 opacity-0' : 'max-h-screen opacity-100'
+          isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
         }`}>
           {children}
         </div>
