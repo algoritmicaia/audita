@@ -71,7 +71,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         </div>
 
         {/* Hora + Tipo de iluminación - lado a lado */}
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <div className="flex-1">
                 <InputForm
                     id={`sampling_point_${id}_time`}
@@ -94,7 +94,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         </div>
 
         {/* Tipo de fuente + Iluminación - lado a lado */}
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <div className="flex-1">
                 <SelectForm
                     id={`sampling_point_${id}_source_type`}
@@ -116,7 +116,7 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         </div>
 
         {/* Uniformidad de iluminancia + Valor medio - lado a lado */}
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <div className="flex-1">
                 <InputForm
                     id={`sampling_point_${id}_luminance_uniformity`}
@@ -151,17 +151,6 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
             />
         </div>
 
-        {/* Observaciones - ancho completo, opcional */}
-        <div className="mb-4">
-            <InputForm
-                id={`sampling_point_${id}_observations`}
-                useArea={true}
-                labelText="Observaciones (Opcional)"
-                placeholder="Ingresá observaciones"
-                required={false}
-                register={register}
-            />
-        </div>
     </div>
   )
 }
