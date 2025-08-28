@@ -11,6 +11,7 @@ import PuntoMuestreo from "../Ui/PuntoMuestreo"
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { processFormData } from '../../utils'
+import { HeroSection } from '../Ui/HeroSection'
 
 function App() {
 
@@ -263,8 +264,9 @@ function App() {
   return (
     <>
       <Header title={'Audita'}/>
-
       <div className="max-w-4xl mx-auto px-4 py-8">
+        <HeroSection/>
+        
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3">

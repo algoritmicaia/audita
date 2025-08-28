@@ -45,103 +45,122 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
         )}
         
         <h1 className="pr-10">Punto de muestreo {displayIndex}</h1>
-        <div className="flex gap-4 mb-6">
-            <div className="flex-1">
-                <InputForm
-                id={`sampling_point_${id}_time`}
-                type="time"
-                labelText="Hora"
-                placeholder="Ingresa la hora del muestreo"
-                required={true}
-                register={register}
-                />
-            </div>
-            <div className="flex-1">
-                <InputForm
+        
+        {/* Sector - ancho completo */}
+        <div className="mb-4">
+            <InputForm
                 id={`sampling_point_${id}_sector`}
                 type="text"
                 labelText="Sector"
-                placeholder="Ingresa el nombre del sector"
+                placeholder="Ingresá el nombre del sector"
                 required={true}
                 register={register}
-                />
-            </div>
-            <div className="flex-1">
-                <InputForm
+            />
+        </div>
+
+        {/* Sección/tipo/puesto - ancho completo */}
+        <div className="mb-4">
+            <InputForm
                 id={`sampling_point_${id}_section`}
                 type="text"
                 labelText="Sección/tipo/puesto"
-                placeholder="Ingresa el nombre de la seccion, tipo o puesto"
+                placeholder="Ingresá la sección, tipo o puesto"
                 required={true}
                 register={register}
-                />
-            </div>
+            />
         </div>
 
-        {/* iluminacion */}
-        <div className="flex gap-4 mb-6">
+        {/* Hora + Tipo de iluminación - lado a lado */}
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="flex-1">
+                <InputForm
+                    id={`sampling_point_${id}_time`}
+                    type="time"
+                    labelText="Hora"
+                    placeholder="Ingresá la hora del muestreo"
+                    required={true}
+                    register={register}
+                />
+            </div>
             <div className="flex-1">
                 <SelectForm
-                id={`sampling_point_${id}_illumination_type`}
-                labelText="Tipo de iluminación"
-                options={tiposIluminacion}
-                required={true}
-                register={register}
-                />
-            </div>
-            <div className="flex-1">
-            <SelectForm
-                id={`sampling_point_${id}_source_type`}
-                labelText="Tipo de fuente"
-                options={tiposFuente}
-                required={true}
-                register={register}
-                />
-            </div>
-            <div className="flex-1">
-            <SelectForm
-                id={`sampling_point_${id}_illumination`}
-                labelText="Iluminación"
-                options={iluminaciones}
-                required={true}
-                register={register}
+                    id={`sampling_point_${id}_illumination_type`}
+                    labelText="Tipo de iluminación"
+                    options={tiposIluminacion}
+                    required={true}
+                    register={register}
                 />
             </div>
         </div>
 
+        {/* Tipo de fuente + Iluminación - lado a lado */}
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="flex-1">
+                <SelectForm
+                    id={`sampling_point_${id}_source_type`}
+                    labelText="Tipo de fuente"
+                    options={tiposFuente}
+                    required={true}
+                    register={register}
+                />
+            </div>
+            <div className="flex-1">
+                <SelectForm
+                    id={`sampling_point_${id}_illumination`}
+                    labelText="Iluminación"
+                    options={iluminaciones}
+                    required={true}
+                    register={register}
+                />
+            </div>
+        </div>
 
-        {/* valores  */}
-        <div className="flex gap-4">
+        {/* Uniformidad de iluminancia + Valor medio - lado a lado */}
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
             <div className="flex-1">
                 <InputForm
-                id={`sampling_point_${id}_luminance_uniformity`}
-                type="text"
-                labelText="Uniformidad de luminancia"
-                placeholder="Ingresa la uniformidad de luminancia"
-                required={true}
-                register={register}
+                    id={`sampling_point_${id}_luminance_uniformity`}
+                    type="text"
+                    labelText="Uniformidad de iluminancia"
+                    placeholder="Ingresá la uniformidad"
+                    required={true}
+                    register={register}
                 />
             </div>
             <div className="flex-1">
                 <InputForm
-                id={`sampling_point_${id}_average_value`}
-                type="text"
-                labelText="Valor medio (Lux)"
-                placeholder="Ingresa el valor medio en Lux"
-                required={true}
-                register={register}
+                    id={`sampling_point_${id}_average_value`}
+                    type="text"
+                    labelText="Valor medio (Lux)"
+                    placeholder="Ingresá el valor medio"
+                    required={true}
+                    register={register}
                 />
             </div>
-            <div className="flex-1">
-                <InputForm
+        </div>
+
+        {/* Valor requerido - ancho completo */}
+        <div className="mb-4">
+            <InputForm
                 id={`sampling_point_${id}_required_value`}
                 type="text"
-                labelText="Valor requerido"
-                placeholder="Valor requerido legalmente"
+                labelText="Valor requerido según anexo"
+                placeholder="Ingresá el valor requerido"
                 required={true}
                 register={register}
-                />
-            </div>
+            />
+        </div>
+
+        {/* Observaciones - ancho completo, opcional */}
+        <div className="mb-4">
+            <InputForm
+                id={`sampling_point_${id}_observations`}
+                useArea={true}
+                labelText="Observaciones (Opcional)"
+                placeholder="Ingresá observaciones"
+                required={false}
+                register={register}
+            />
         </div>
     </div>
   )
