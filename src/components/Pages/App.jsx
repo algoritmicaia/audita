@@ -38,6 +38,7 @@ function App() {
 
         if (response.ok) {
           const data = await response.json();
+          console.log('Obteniendo datos del servidor')
           console.log(data)
           // Si hay datos existentes, poblar los campos del formulario
           if (data && data.result !== 'ok') {
@@ -82,15 +83,15 @@ function App() {
 
               // Poblar los campos de cada punto de muestreo
               data.sampling_points.forEach((punto, index) => {
-                if (punto.time) setValue(`sampling_points.${index}.time`, punto.time);
-                if (punto.sector) setValue(`sampling_points.${index}.sector`, punto.sector);
-                if (punto.section) setValue(`sampling_points.${index}.section`, punto.section);
-                if (punto.illumination_type) setValue(`sampling_points.${index}.illumination_type`, punto.illumination_type);
-                if (punto.source_type) setValue(`sampling_points.${index}.source_type`, punto.source_type);
-                if (punto.illumination) setValue(`sampling_points.${index}.illumination`, punto.illumination);
-                if (punto.luminance_uniformity) setValue(`sampling_points.${index}.luminance_uniformity`, punto.luminance_uniformity);
-                if (punto.average_value) setValue(`sampling_points.${index}.average_value`, punto.average_value);
-                if (punto.required_value) setValue(`sampling_points.${index}.required_value`, punto.required_value);
+                if (punto.time) setValue(`sampling_point_${index}_time`, punto.time);
+                if (punto.sector) setValue(`sampling_point_${index}_sector`, punto.sector);
+                if (punto.section) setValue(`sampling_point_${index}_section`, punto.section);
+                if (punto.illumination_type) setValue(`sampling_point_${index}_illumination_type`, punto.illumination_type);
+                if (punto.source_type) setValue(`sampling_point_${index}_source_type`, punto.source_type);
+                if (punto.illumination) setValue(`sampling_point_${index}_illumination`, punto.illumination);
+                if (punto.luminance_uniformity) setValue(`sampling_point_${index}_luminance_uniformity`, punto.luminance_uniformity);
+                if (punto.average_value) setValue(`sampling_point_${index}_average_value`, punto.average_value);
+                if (punto.required_value) setValue(`sampling_point_${index}_required_value`, punto.required_value);
               });
             }
           }
@@ -104,7 +105,6 @@ function App() {
 
     loadExistingData();
   }, [setValue]);
-
 
 
   const sendData = (data) => {
@@ -136,7 +136,7 @@ function App() {
       // Procesar los datos para estructurar los puntos de muestreo
       const processedData = processFormData(formData, puntosMuestreo);
       
-      console.log('Autoguardando:', processedData);
+      console.log('Autoguardando...');
       
       // Enviar los datos al servidor (puedes usar el mismo endpoint o crear uno específico para autoguardado)
       const response = await fetch('/api/ilumination_protocol', {
@@ -212,14 +212,31 @@ function App() {
     }, 500);
   }
 
-  const eliminarPuntoMuestreo = (idToDelete) => {
+  const eliminarPuntoMuestreo = async (idToDelete) => {
+    // Limpiar los campos del formulario del punto eliminado
+    const fieldsToClear = [
+      'time', 'sector', 'section', 'illumination_type', 'source_type',
+      'illumination', 'luminance_uniformity', 'average_value', 'required_value'
+    ];
+    
+    fieldsToClear.forEach(field => {
+      setValue(`sampling_point_${idToDelete}_${field}`, '');
+    });
+
     setPuntosMuestreo(prev => {
       const filtered = prev.filter(punto => punto.id !== idToDelete);
       // Reordenar los displayIndex para que sean consecutivos
-      return filtered.map((punto, index) => ({
+      const updated = filtered.map((punto, index) => ({
         ...punto,
         displayIndex: index + 1
       }));
+      
+      // Ejecutar autosave después de que el estado se actualice
+      setTimeout(() => {
+        autoSave();
+      }, 0);
+      
+      return updated;
     });
   }
 
