@@ -37,10 +37,10 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
           <button
             type="button"
             onClick={handleDelete}
-            className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md hover:shadow-lg print:hidden"
+            className="absolute top-3 right-3 w-8 h-8 text-red-500 hover:text-red-600 flex items-center justify-center transition-colors duration-200 print:hidden"
             title="Eliminar punto de muestreo"
           >
-            <FontAwesomeIcon icon={faTimes} className="text-sm" />
+            <FontAwesomeIcon icon={faTimes} className="text-lg" />
           </button>
         )}
         
