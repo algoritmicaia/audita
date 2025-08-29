@@ -28,6 +28,32 @@ function App() {
   const [isAutoSaving, setIsAutoSaving] = useState(false); // Estado para mostrar feedback de autoguardado
   const [isLoading, setIsLoading] = useState(true); // Estado para mostrar loading mientras se cargan los datos
   
+  // Función para obtener la fecha actual en formato YYYY-MM-DD
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  // Función para obtener la hora actual en formato HH:MM
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().slice(0, 5);
+  };
+
+  // Función para establecer valores por defecto de fecha y hora
+  const setDefaultDateTimeValues = () => {
+    const currentDate = getCurrentDate();
+    const currentTime = getCurrentTime();
+    
+    // Establecer fecha actual para campos de fecha
+    setValue('calibration_date', currentDate);
+    setValue('measurement_date', currentDate);
+    
+    // Establecer hora actual para campos de tiempo
+    setValue('measurement_start_time', currentTime);
+    setValue('measurement_end_time', currentTime);
+  };
+
   useEffect(() => {
     const loadExistingData = async () => {
       try {
@@ -99,10 +125,18 @@ function App() {
                 if (punto.required_value) setValue(`sampling_point_${index}_required_value`, punto.required_value);
               });
             }
+          } else {
+            // Si no hay datos existentes, establecer valores por defecto
+            setDefaultDateTimeValues();
           }
+        } else {
+          // Si no hay respuesta exitosa, establecer valores por defecto
+          setDefaultDateTimeValues();
         }
       } catch (error) {
         console.error('Error cargando datos existentes:', error);
+        // En caso de error, establecer valores por defecto
+        setDefaultDateTimeValues();
       } finally {
         setIsLoading(false);
       }
@@ -192,6 +226,10 @@ function App() {
     setPuntosMuestreo(prev => [...prev, newPunto]);
     setNextId(prev => prev + 1);
     
+    // Establecer hora actual por defecto para el nuevo punto de muestreo
+    const currentTime = getCurrentTime();
+    setValue(`sampling_point_${newId}_time`, currentTime);
+    
     // Agregar el nuevo item a la lista de animaciones
     setAnimatingItems(prev => new Set([...prev, newId]));
        
@@ -270,10 +308,10 @@ function App() {
   return (
     <>
       <Header title={'Audita'}/>
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <HeroSection/>
 
-        <div className='flex gap-6 py-8 print:hidden'>
+        <div className='flex gap-6 py-4 print:hidden'>
           <div className='flex-1'>
             <Card
               icon={<FontAwesomeIcon icon={faCheck} className="text-white text-xl"/>}
@@ -303,207 +341,89 @@ function App() {
             </div>
           </div>
         ) : (
+          <div className='py-4'>
           <Form onSubmit={handleSubmit(sendData)}>
-          <Section 
-            title={'Datos de la empresa'} 
-            isCollapsed={sectionsCollapse.empresa}
-            onToggle={() => toggleSection('empresa')}
-          >
-
-            <div className="space-y-4 flex gap-4">
-              <div className="flex-1">
-                <InputForm
-                  id="company_name"
-                  type="text"
-                  labelText="Razón social"
-                  placeholder="Ingresa la razón social de la empresa"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-
-              <div className="flex-1">
-                <InputForm
-                  id="tax_id"
-                  type="number"
-                  labelText="CUIT"
-                  placeholder="Ingresa el cuit de la empresa"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4 gap-4">
-              <div className="">
-                <InputForm
-                  id="address"
-                  type="text"
-                  labelText="Dirección"
-                  placeholder="Ingresa la dirección de la empresa"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-
-              <div className="">
-                <InputForm
-                  id="city"
-                  type="text"
-                  labelText="Localidad"
-                  placeholder="Ingresa la localidad de la empresa"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-
-              <div className="">
-                <InputForm
-                  id="state"
-                  type="text"
-                  labelText="Provincia"
-                  placeholder="Ingresa la provincia de la empresa"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-
-              <div className="">
-                <InputForm
-                  id="postal_code"
-                  type="text"
-                  labelText="CP"
-                  placeholder="Ingresa el código postal"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-
-              <div className="">
-                <InputForm
-                  id="working_hours"
-                  useArea={true}
-                  labelText="Horarios/Turnos habituales de la empresa"
-                  placeholder="Ingresa los horarios de la empresa"
-                  required={true}
-                  register={registerWithAutoSave}
-                />
-              </div>
-
-            </div>
-
-          </Section>
-
-          <div className='break-before-page'>
-          </div>
-
-          <Section 
-            title={'Datos del responsable'} 
-            isCollapsed={sectionsCollapse.responsable}
-            onToggle={() => toggleSection('responsable')}
-          >
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <InputForm
-                    id="first_name"
-                    type="text"
-                    labelText="Nombre"
-                    placeholder="Ingresa tu nombre"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
-
-                </div>
-                <div className="flex-1">
-                  <InputForm
-                    id="last_name"
-                    type="text"
-                    labelText="Apellido"
-                    placeholder="Ingresa tu apellido"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
-
-                </div>
-
-              </div>
-
-              <InputForm
-                id="license_number"
-                type="number"
-                labelText="Matrícula"
-                placeholder="Ingresa tu matricula profesional"
-                required={true}
-                register={registerWithAutoSave}
-              />
-
-            </div>
-          </Section>
-
-          <Section 
-            title={'Datos de la medición'} 
-            isCollapsed={sectionsCollapse.medicion}
-            onToggle={() => toggleSection('medicion')}
-          >
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <InputForm
-                    id="instrument_model_serial"
-                    type="text"
-                    labelText="Instrumento"
-                    placeholder="Marca, modelo, nro de serie"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
-                </div>
-
-                <div className="flex-1">
-                  <InputForm
-                    id="calibration_date"
-                    type="date"
-                    labelText="Fecha de calibración"
-                    placeholder="Ingresa la fecha de calibracion de tu equipo"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
-              </div>
-              </div>
-
-              <InputForm
-                id="methodology"
-                useArea={true}
-                labelText="Metodología utilizada"
-                placeholder="Ingresa la metodología utilizada"
-                required={true}
-                register={registerWithAutoSave}
-              />
-
-              <InputForm
-                id="measurement_date"
-                type="date"
-                labelText="Fecha de la medición"
-                required={true}
-                register={registerWithAutoSave}
-              />
+            <Section 
+              title={'Datos de la empresa'} 
+              isCollapsed={sectionsCollapse.empresa}
+              onToggle={() => toggleSection('empresa')}
+            >
 
               <div className="space-y-4 flex gap-4">
                 <div className="flex-1">
                   <InputForm
-                    id="measurement_start_time"
-                    type="time"
-                    labelText="Hora de inicio de la medición"
+                    id="company_name"
+                    type="text"
+                    labelText="Razón social"
+                    placeholder="Ingresa la razón social de la empresa"
                     required={true}
                     register={registerWithAutoSave}
                   />
-               </div>
+                </div>
 
-               <div className="flex-1">
+                <div className="flex-1">
                   <InputForm
-                    id="measurement_end_time"
-                    type="time"
-                    labelText="Hora de finalización"
+                    id="tax_id"
+                    type="number"
+                    labelText="CUIT"
+                    placeholder="Ingresa el cuit de la empresa"
+                    required={true}
+                    register={registerWithAutoSave}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 gap-4">
+                <div className="">
+                  <InputForm
+                    id="address"
+                    type="text"
+                    labelText="Dirección"
+                    placeholder="Ingresa la dirección de la empresa"
+                    required={true}
+                    register={registerWithAutoSave}
+                  />
+                </div>
+
+                <div className="">
+                  <InputForm
+                    id="city"
+                    type="text"
+                    labelText="Localidad"
+                    placeholder="Ingresa la localidad de la empresa"
+                    required={true}
+                    register={registerWithAutoSave}
+                  />
+                </div>
+
+                <div className="">
+                  <InputForm
+                    id="state"
+                    type="text"
+                    labelText="Provincia"
+                    placeholder="Ingresa la provincia de la empresa"
+                    required={true}
+                    register={registerWithAutoSave}
+                  />
+                </div>
+
+                <div className="">
+                  <InputForm
+                    id="postal_code"
+                    type="text"
+                    labelText="CP"
+                    placeholder="Ingresa el código postal"
+                    required={true}
+                    register={registerWithAutoSave}
+                  />
+                </div>
+
+                <div className="">
+                  <InputForm
+                    id="working_hours"
+                    useArea={true}
+                    labelText="Horarios/Turnos habituales de la empresa"
+                    placeholder="Ingresa los horarios de la empresa"
                     required={true}
                     register={registerWithAutoSave}
                   />
@@ -511,115 +431,238 @@ function App() {
 
               </div>
 
-              <InputForm
-                id="atmospheric_conditions"
-                useArea={true}
-                labelText="Condiciones atmosféricas"
-                required={true}
-                register={registerWithAutoSave}
-              />
+            </Section>
 
+            <div className='break-before-page'>
             </div>
-          </Section>
 
-          <div className='break-before-page'>
-          </div>
-          
-          <Section 
-            title={'Puntos de muestreo'} 
-            isCollapsed={sectionsCollapse.puntosMuestreo}
-            onToggle={() => toggleSection('puntosMuestreo')}
-          >
-            {/* Contenedor scrolleable para los puntos de muestreo */}
-            <div className="puntos-muestreo-container space-y-4 pr-2 mb-4">
-              {puntosMuestreo.map((punto) => (
-                <div
-                  key={punto.id}
-                  className={`transition-all duration-125 ease-out ${
-                    animatingItems.has(punto.id)
-                      ? 'opacity-0 transform -translate-y-4 scale-95'
-                      : 'opacity-100 transform translate-y-0 scale-100'
-                  }`}
-                >
-                  <PuntoMuestreo 
-                     register={registerWithAutoSave} 
-                     id={punto.id}
-                     displayIndex={punto.displayIndex}
-                     onDelete={eliminarPuntoMuestreo}
-                   />
+            <Section 
+              title={'Datos del responsable'} 
+              isCollapsed={sectionsCollapse.responsable}
+              onToggle={() => toggleSection('responsable')}
+            >
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <InputForm
+                      id="first_name"
+                      type="text"
+                      labelText="Nombre"
+                      placeholder="Ingresa tu nombre"
+                      required={true}
+                      register={registerWithAutoSave}
+                    />
+
+                  </div>
+                  <div className="flex-1">
+                    <InputForm
+                      id="last_name"
+                      type="text"
+                      labelText="Apellido"
+                      placeholder="Ingresa tu apellido"
+                      required={true}
+                      register={registerWithAutoSave}
+                    />
+
+                  </div>
+
                 </div>
-              ))}
 
-              <InputForm
-                  id="sampling_observations"
-                  useArea={true}
-                  labelText="Observaciones"
+                <InputForm
+                  id="license_number"
+                  type="number"
+                  labelText="Matrícula"
+                  placeholder="Ingresa tu matricula profesional"
                   required={true}
                   register={registerWithAutoSave}
                 />
-            </div>
 
+              </div>
+            </Section>
+
+            <Section 
+              title={'Datos de la medición'} 
+              isCollapsed={sectionsCollapse.medicion}
+              onToggle={() => toggleSection('medicion')}
+            >
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <InputForm
+                      id="instrument_model_serial"
+                      type="text"
+                      labelText="Instrumento"
+                      placeholder="Marca, modelo, nro de serie"
+                      required={true}
+                      register={registerWithAutoSave}
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <InputForm
+                      id="calibration_date"
+                      type="date"
+                      labelText="Fecha de calibración"
+                      placeholder="Ingresa la fecha de calibracion de tu equipo"
+                      required={true}
+                      register={registerWithAutoSave}
+                    />
+                </div>
+                </div>
+
+                <InputForm
+                  id="methodology"
+                  useArea={true}
+                  labelText="Metodología utilizada"
+                  placeholder="Ingresa la metodología utilizada"
+                  required={true}
+                  register={registerWithAutoSave}
+                />
+
+                <InputForm
+                  id="measurement_date"
+                  type="date"
+                  labelText="Fecha de la medición"
+                  required={true}
+                  register={registerWithAutoSave}
+                />
+
+                <div className="space-y-4 flex gap-4">
+                  <div className="flex-1">
+                    <InputForm
+                      id="measurement_start_time"
+                      type="time"
+                      labelText="Hora de inicio de la medición"
+                      required={true}
+                      register={registerWithAutoSave}
+                    />
+                </div>
+
+                <div className="flex-1">
+                    <InputForm
+                      id="measurement_end_time"
+                      type="time"
+                      labelText="Hora de finalización"
+                      required={true}
+                      register={registerWithAutoSave}
+                    />
+                  </div>
+
+                </div>
+
+                <InputForm
+                  id="atmospheric_conditions"
+                  useArea={true}
+                  labelText="Condiciones atmosféricas"
+                  required={true}
+                  register={registerWithAutoSave}
+                />
+
+              </div>
+            </Section>
+
+            <div className='break-before-page'>
+            </div>
             
-            {/* Botón para agregar más puntos de muestreo */}
-            <div className="mt-6">
-              <Button 
-                type="button" 
-                variant="success" 
-                onClick={agregarPuntoMuestreo}
-                className="flex items-center gap-2 print:hidden"
+            <Section 
+              title={'Puntos de muestreo'} 
+              isCollapsed={sectionsCollapse.puntosMuestreo}
+              onToggle={() => toggleSection('puntosMuestreo')}
+            >
+              {/* Contenedor scrolleable para los puntos de muestreo */}
+              <div className="puntos-muestreo-container space-y-4 pr-2 mb-4">
+                {puntosMuestreo.map((punto) => (
+                  <div
+                    key={punto.id}
+                    className={`transition-all duration-125 ease-out ${
+                      animatingItems.has(punto.id)
+                        ? 'opacity-0 transform -translate-y-4 scale-95'
+                        : 'opacity-100 transform translate-y-0 scale-100'
+                    }`}
+                  >
+                    <PuntoMuestreo 
+                      register={registerWithAutoSave} 
+                      id={punto.id}
+                      displayIndex={punto.displayIndex}
+                      onDelete={eliminarPuntoMuestreo}
+                    />
+                  </div>
+                ))}
+
+                <InputForm
+                    id="sampling_observations"
+                    useArea={true}
+                    labelText="Observaciones"
+                    required={true}
+                    register={registerWithAutoSave}
+                  />
+              </div>
+
+              
+              {/* Botón para agregar más puntos de muestreo */}
+              <div className="mt-6">
+                <Button 
+                  type="button" 
+                  variant="success" 
+                  onClick={agregarPuntoMuestreo}
+                  className="flex items-center gap-2 print:hidden"
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                  Añadir punto de muestreo
+                </Button>
+              </div>
+            </Section>
+
+            <div className='break-inside-avoid'>
+              <Section 
+                title={'Conclusiones y recomendaciones'} 
+                isCollapsed={sectionsCollapse.conclusiones}
+                onToggle={() => toggleSection('conclusiones')}
               >
-                <FontAwesomeIcon icon={faPlus} />
-                Añadir punto de muestreo
-              </Button>
-            </div>
-          </Section>
+                <div className="space-y-4">
+                      <InputForm
+                        id="conclusions"
+                        useArea={true}
+                        labelText="Conclusiones"
+                        placeholder="Escribe tus conclusiones"
+                        required={true}
+                        register={registerWithAutoSave}
+                      />
 
-          <Section 
-            title={'Conclusiones y recomendaciones'} 
-            isCollapsed={sectionsCollapse.conclusiones}
-            onToggle={() => toggleSection('conclusiones')}
-          >
-            <div className="space-y-4">
-                  <InputForm
-                    id="conclusions"
-                    useArea={true}
-                    labelText="Conclusiones"
-                    placeholder="Escribe tus conclusiones"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
+                      <InputForm
+                        id="recommendations"
+                        useArea={true}
+                        labelText="Recomendaciones"
+                        placeholder="Escribe tus recomendaciones"
+                        required={true}
+                        register={registerWithAutoSave}
+                      />
 
-                  <InputForm
-                    id="recommendations"
-                    useArea={true}
-                    labelText="Recomendaciones"
-                    placeholder="Escribe tus recomendaciones"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
+                </div>
+              </Section>
 
             </div>
-          </Section>
 
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
             {/* Indicador de autoguardado */}
-            <div className="flex items-center text-sm text-gray-500">
-              {isAutoSaving && (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
-                  Guardando automáticamente...
-                </>
-              )}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+              <div className="flex items-center text-sm text-gray-500">
+                {isAutoSaving && (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                    Guardando automáticamente...
+                  </>
+                )}
+              </div>
+              
+              <div className="flex items-center space-x-3 print:hidden">
+                <Button type="submit" variant="primary" onClick={downloadPDF}>
+                  Descargar PDF
+                </Button>
+              </div>
             </div>
-            
-            <div className="flex items-center space-x-3 print:hidden">
-              <Button type="submit" variant="primary" onClick={downloadPDF}>
-                Descargar PDF
-              </Button>
-            </div>
-          </div>
 
           </Form>
+        </div>
         )}
       </div>
 
