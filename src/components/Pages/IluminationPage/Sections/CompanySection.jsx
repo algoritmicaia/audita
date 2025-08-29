@@ -2,13 +2,13 @@ import React from 'react'
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
 
-export const CompanySection = ({registerWithAutoSave}) => {
+export const CompanySection = ({registerWithAutoSave, isCollapsed, onToggle}) => {
   return (
     <>
         <Section 
             title={'Datos de la empresa'} 
-            // isCollapsed={sectionsCollapse.empresa}
-            onToggle={() => toggleSection('empresa')}
+            isCollapsed={isCollapsed}
+            onToggle={() => onToggle()}
         >
 
             <div className="space-y-4 flex gap-4">

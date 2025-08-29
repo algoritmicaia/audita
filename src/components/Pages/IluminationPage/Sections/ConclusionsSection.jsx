@@ -2,13 +2,13 @@ import React from "react";
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
 
-export const ConclusionsSection = ({registerWithAutoSave}) => {
+export const ConclusionsSection = ({registerWithAutoSave, isCollapsed, onToggle}) => {
   return (
     <>
       <Section
         title={"Conclusiones y recomendaciones"}
-        // isCollapsed={sectionsCollapse.conclusiones}
-        onToggle={() => toggleSection("conclusiones")}
+        isCollapsed={isCollapsed}
+        onToggle={() => onToggle()}
       >
         <div className="space-y-4">
           <InputForm

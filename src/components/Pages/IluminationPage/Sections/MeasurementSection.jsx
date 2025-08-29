@@ -2,13 +2,13 @@ import React from "react";
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
 
-export const MeasurementSection = ({registerWithAutoSave}) => {
+export const MeasurementSection = ({registerWithAutoSave, isCollapsed, onToggle}) => {
   return (
     <>
       <Section
         title={"Datos de la medición"}
-        // isCollapsed={sectionsCollapse.medicion}
-        onToggle={() => toggleSection("medicion")}
+        isCollapsed={isCollapsed}
+        onToggle={() => onToggle()}
       >
         <div className="space-y-4">
           <div className="flex gap-4">

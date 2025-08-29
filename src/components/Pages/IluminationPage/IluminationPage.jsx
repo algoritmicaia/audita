@@ -2,13 +2,9 @@ import React from "react";
 import Header from "../../Ui/Header";
 import Footer from "../../Ui/Footer";
 import Form from "../../Ui/Form";
-import InputForm from "../../Ui/InputForm";
 import Button from "../../Ui/Button";
-import Section from "../../Ui/Section";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import PuntoMuestreo from "../../Ui/PuntoMuestreo";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { processFormData } from "../../../utils";
 import { HeroSection } from "../../Ui/HeroSection";
 import { Card } from "../../Ui/card";
@@ -22,8 +18,14 @@ import { CompanySection } from "./Sections/CompanySection";
 import { ResponsibleSection } from "./Sections/ResponsibleSection";
 import { MeasurementSection } from "./Sections/MeasurementSection";
 import { ConclusionsSection } from "./Sections/ConclusionsSection";
+import { useSectionsCollapse } from "./Hooks/useSectionsCollapse"; 
+import { SamplingPointsSection } from "./Sections/SamplingPointsSection";
 
 function IluminationForm() {
+  const [sections, dispatch] = useSectionsCollapse();
+
+
+
   const { register, handleSubmit, getValues, setValue } = useForm();
   const [puntosMuestreo, setPuntosMuestreo] = useState([]);
   const [animatingItems, setAnimatingItems] = useState(new Set()); // Para controlar animaciones
@@ -319,37 +321,12 @@ function IluminationForm() {
   };
 
   const downloadPDF = async () => {
-    expandAllSections();
+    dispatch({type:"expandAll"})
 
     // Pequeño delay para asegurar que las secciones se desplieguen antes de imprimir
     setTimeout(() => {
       window.print();
     }, 100);
-  };
-
-  const [sectionsCollapse, setSectionsCollapse] = useState({
-    empresa: false,
-    responsable: true,
-    medicion: true,
-    puntosMuestreo: true,
-    conclusiones: true,
-  });
-
-  const toggleSection = (sectionName) => {
-    setSectionsCollapse((prev) => ({
-      ...prev,
-      [sectionName]: !prev[sectionName],
-    }));
-  };
-
-  const expandAllSections = () => {
-    setSectionsCollapse({
-      empresa: false,
-      responsable: false,
-      medicion: false,
-      puntosMuestreo: false,
-      conclusiones: false,
-    });
   };
 
   return (
@@ -358,6 +335,7 @@ function IluminationForm() {
       <div className="max-w-4xl mx-auto px-4 py-4">
         <HeroSection />
 
+        {/* cards */}
         <div className="flex gap-6 py-4 print:hidden">
           <div className="flex-1">
             <Card
@@ -404,67 +382,38 @@ function IluminationForm() {
         ) : (
           <div className="py-4">
             <Form onSubmit={handleSubmit(sendData)}>
-              <CompanySection registerWithAutoSave={registerWithAutoSave} />
+              <CompanySection 
+                registerWithAutoSave={registerWithAutoSave} 
+                isCollapsed={sections.empresa} 
+                onToggle={() => dispatch({type:"toggle", key:"empresa"})} />
 
               <div className="break-before-page"></div>
 
-              <ResponsibleSection registerWithAutoSave={registerWithAutoSave} />
+              <ResponsibleSection 
+                registerWithAutoSave={registerWithAutoSave}
+                isCollapsed={sections.responsable} 
+                onToggle={() => dispatch({type:"toggle", key:"responsable"})}
+              />
 
-              <MeasurementSection registerWithAutoSave={registerWithAutoSave} />
+              <MeasurementSection 
+                registerWithAutoSave={registerWithAutoSave}
+                isCollapsed={sections.medicion} 
+                onToggle={() => dispatch({type:"toggle", key:"medicion"})}
+              />
 
               <div className="break-before-page"></div>
 
-              <Section
-                title={"Puntos de muestreo"}
-                isCollapsed={sectionsCollapse.puntosMuestreo}
-                onToggle={() => toggleSection("puntosMuestreo")}
-              >
-                {/* Contenedor scrolleable para los puntos de muestreo */}
-                <div className="puntos-muestreo-container space-y-4 pr-2 mb-4">
-                  {puntosMuestreo.map((punto) => (
-                    <div
-                      key={punto.id}
-                      className={`transition-all duration-125 ease-out ${
-                        animatingItems.has(punto.id)
-                          ? "opacity-0 transform -translate-y-4 scale-95"
-                          : "opacity-100 transform translate-y-0 scale-100"
-                      }`}
-                    >
-                      <PuntoMuestreo
-                        register={registerWithAutoSave}
-                        id={punto.id}
-                        displayIndex={punto.displayIndex}
-                        onDelete={eliminarPuntoMuestreo}
-                      />
-                    </div>
-                  ))}
-
-                  <InputForm
-                    id="sampling_observations"
-                    useArea={true}
-                    labelText="Observaciones"
-                    required={true}
-                    register={registerWithAutoSave}
-                  />
-                </div>
-
-                {/* Botón para agregar más puntos de muestreo */}
-                <div className="mt-6">
-                  <Button
-                    type="button"
-                    variant="success"
-                    onClick={agregarPuntoMuestreo}
-                    className="flex items-center gap-2 print:hidden"
-                  >
-                    <FontAwesomeIcon icon={faPlus} />
-                    Añadir punto de muestreo
-                  </Button>
-                </div>
-              </Section>
+              <SamplingPointsSection
+                  registerWithAutoSave={registerWithAutoSave}
+                  isCollapsed={sections.puntosMuestreo} 
+                  onToggle={() => dispatch({type:"toggle", key:"puntosMuestreo"})}
+              />
 
               <div className="break-inside-avoid">
                 <ConclusionsSection
                   registerWithAutoSave={registerWithAutoSave}
+                  isCollapsed={sections.conclusiones} 
+                  onToggle={() => dispatch({type:"toggle", key:"conclusiones"})}
                 />
               </div>
 

@@ -2,12 +2,12 @@ import React from 'react'
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
 
-export const ResponsibleSection = ({registerWithAutoSave}) => {
+export const ResponsibleSection = ({registerWithAutoSave, isCollapsed, onToggle}) => {
   return (
     <Section 
     title={'Datos del responsable'} 
-    // isCollapsed={sectionsCollapse.responsable}
-    onToggle={() => toggleSection('responsable')}
+    isCollapsed={isCollapsed}
+    onToggle={() => onToggle()}
     >
         <div className="space-y-4">
             <div className="flex gap-4">
