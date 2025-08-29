@@ -9,9 +9,15 @@ import { useForm } from "react-hook-form"
 import { useEffect, useState } from 'react'
 import PuntoMuestreo from "../Ui/PuntoMuestreo"
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { processFormData } from '../../utils'
 import { HeroSection } from '../Ui/HeroSection'
+import { Card } from '../Ui/card'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { 
+  faCheck,
+  faFile,
+  faSignature
+} from '@fortawesome/free-solid-svg-icons'
 
 function App() {
 
@@ -266,7 +272,29 @@ function App() {
       <Header title={'Audita'}/>
       <div className="max-w-4xl mx-auto px-4 py-8">
         <HeroSection/>
-        
+
+        <div className='flex gap-6 py-8 print:hidden'>
+          <div className='flex-1'>
+            <Card
+              icon={<FontAwesomeIcon icon={faCheck} className="text-white text-xl"/>}
+              text={'Cumplimiento normativo garantizado'}
+            />
+          </div>
+
+          <div className='flex-1'>
+            <Card
+              icon={<FontAwesomeIcon icon={faFile} className="text-white text-xl"/>}
+              text={'Registro digital, seguro y descargable'}
+            />
+          </div>
+          <div className='flex-1'>
+            <Card
+              icon={<FontAwesomeIcon icon={faSignature} className="text-white text-xl"/>}
+              text={'Ahorro de tiempo en tu práctica profesional'}
+            />
+          </div>
+        </div>
+
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3">
