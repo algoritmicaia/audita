@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
-import PuntoMuestreo from "../../../Ui/SamplingPoint"
+import SamplingPoint from "../../../Ui/SamplingPoint"
 import Button from "../../../Ui/Button"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -36,7 +36,7 @@ export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
             <div
               key={punto.id}
             >
-              <PuntoMuestreo
+              <SamplingPoint
                 id={punto.id}
                 displayIndex={punto.displayIndex}
                 onDelete={() => eliminarPuntoMuestreo(punto.id)}

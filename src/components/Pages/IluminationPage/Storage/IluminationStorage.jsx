@@ -21,6 +21,35 @@ export const useIluminationStore = create()(
           },
         })),
 
+      measurement: {
+        instrumentModelSerial: "",
+        calibrationDate: "",
+        methodology: "",
+        measurementDate: "",
+        measurementStartTime: "",
+        measurementEndTime: "",
+        atmosphericConditions: "",
+      },
+      setMeasurementField: (field, value) =>
+        set((state) => ({
+          measurement: {
+            ...state.measurement,
+            [field]: value,
+          },
+        })),
+
+      conclusions: {
+        conclusions: "",
+        recommendations: "",
+      },
+      setConclusionsField: (field, value) =>
+        set((state) => ({
+          conclusions: {
+            ...state.conclusions,
+            [field]: value,
+          },
+        })),
+
       samplingPoints: {
         samplingPoints: [],
         observations: "",

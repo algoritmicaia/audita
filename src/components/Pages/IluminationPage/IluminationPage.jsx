@@ -79,10 +79,10 @@ function IluminationForm() {
 
           <div className="break-before-page"></div>
 
-          {/* <MeasurementSection
+          <MeasurementSection
             isCollapsed={sections.medicion}
             onToggle={() => dispatch({ type: "toggle", key: "medicion" })}
-          /> */}
+          />
 
           <div className="break-before-page"></div>
 
@@ -91,13 +91,12 @@ function IluminationForm() {
             onToggle={() => dispatch({ type: "toggle", key: "puntosMuestreo" })}
           />
 
-          {/* <div className="break-inside-avoid">
+          <div className="break-inside-avoid">
             <ConclusionsSection
-              registerWithAutoSave={registerWithAutoSave}
-              isCollapsed={sections.conclusiones}
+                isCollapsed={sections.conclusiones}
               onToggle={() => dispatch({ type: "toggle", key: "conclusiones" })}
             />
-          </div> */}
+          </div>
 
           {/* Indicador de autoguardado */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-200">

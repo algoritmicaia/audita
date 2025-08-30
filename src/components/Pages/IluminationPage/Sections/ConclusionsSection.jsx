@@ -1,8 +1,16 @@
 import React from "react";
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
+import { useIluminationStore } from "../Storage/IluminationStorage";
 
-export const ConclusionsSection = ({registerWithAutoSave, isCollapsed, onToggle}) => {
+export const ConclusionsSection = ({isCollapsed, onToggle}) => {
+  const conclusions = useIluminationStore((state) => state.conclusions.conclusions);
+  const recommendations = useIluminationStore((state) => state.conclusions.recommendations);
+
+  const setConclusionsField = useIluminationStore((state) => state.setConclusionsField);
+
+  const handleFieldChange = (field) => (e) => setConclusionsField(field, e.target.value);
+
   return (
     <>
       <Section
@@ -16,8 +24,8 @@ export const ConclusionsSection = ({registerWithAutoSave, isCollapsed, onToggle}
             useArea={true}
             labelText="Conclusiones"
             placeholder="Escribe tus conclusiones"
-            required={true}
-            register={registerWithAutoSave}
+            value={conclusions}
+            onChange={handleFieldChange('conclusions')}
           />
 
           <InputForm
@@ -25,8 +33,8 @@ export const ConclusionsSection = ({registerWithAutoSave, isCollapsed, onToggle}
             useArea={true}
             labelText="Recomendaciones"
             placeholder="Escribe tus recomendaciones"
-            required={true}
-            register={registerWithAutoSave}
+            value={recommendations}
+            onChange={handleFieldChange('recommendations')}
           />
         </div>
       </Section>
