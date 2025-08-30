@@ -3,26 +3,51 @@ import InputForm from './InputForm'
 import SelectForm from './SelectForm'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { useIluminationStore } from '../Pages/IluminationPage/Storage/IluminationStorage'
 
-export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDeleteButton = true}) => {
+export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton = true}) => {
+  // Obtener los datos del punto de muestreo desde el store
+  const samplingPoints = useIluminationStore((state) => state.samplingPoints);
+  const setSamplingPointField = useIluminationStore((state) => state.setSamplingPointField);
+  
+  // Encontrar el punto específico por ID
+  const currentPoint = samplingPoints.find(point => point.id === id) || {};
+  
+  // Extraer los valores del punto actual
+  const {
+    sector = "",
+    section = "",
+    time = "",
+    illuminationType = "",
+    sourceType = "",
+    illumination = "",
+    luminanceUniformity = "",
+    averageValue = "",
+    requiredValue = "",
+  } = currentPoint;
 
-    const tiposIluminacion = [
-        { value: "Natural", label: "Natural" },
-        { value: "Artificial", label: "Artificial" },
-        { value: "Mixta", label: "Mixta" }
-      ];
-    
-      const tiposFuente = [
-        { value: "Incandescente", label: "Incandescente" },
-        { value: "Descarga", label: "Descarga" },
-        { value: "Mixta", label: "Mixta" }
-      ];
-    
-      const iluminaciones = [
-        { value: "General", label: "General" },
-        { value: "Localizada", label: "Localizada" },
-        { value: "Mixta", label: "Mixta" }
-      ];
+  // Función helper para manejar cambios de campos
+  const handleFieldChange = (field) => (e) => {
+    setSamplingPointField(id, field, e.target.value);
+  };
+
+  const tiposIluminacion = [
+    { value: "Natural", label: "Natural" },
+    { value: "Artificial", label: "Artificial" },
+    { value: "Mixta", label: "Mixta" }
+  ];
+
+  const tiposFuente = [
+    { value: "Incandescente", label: "Incandescente" },
+    { value: "Descarga", label: "Descarga" },
+    { value: "Mixta", label: "Mixta" }
+  ];
+
+  const iluminaciones = [
+    { value: "General", label: "General" },
+    { value: "Localizada", label: "Localizada" },
+    { value: "Mixta", label: "Mixta" }
+  ];
 
   const handleDelete = () => {
     if (onDelete) {
@@ -37,10 +62,10 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
           <button
             type="button"
             onClick={handleDelete}
-            className="absolute top-3 right-3 w-8 h-8 text-red-500 hover:text-red-600 flex items-center justify-center transition-colors duration-200 print:hidden"
+            className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md hover:shadow-lg print:hidden"
             title="Eliminar punto de muestreo"
           >
-            <FontAwesomeIcon icon={faTimes} className="text-lg" />
+            <FontAwesomeIcon icon={faTimes} className="text-sm" />
           </button>
         )}
         
@@ -53,8 +78,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                 type="text"
                 labelText="Sector"
                 placeholder="Ingresá el nombre del sector"
-                required={true}
-                register={register}
+                value={sector}
+                onChange={handleFieldChange('sector')}
             />
         </div>
 
@@ -65,8 +90,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                 type="text"
                 labelText="Sección/tipo/puesto"
                 placeholder="Ingresá la sección, tipo o puesto"
-                required={true}
-                register={register}
+                value={section}
+                onChange={handleFieldChange('section')}
             />
         </div>
 
@@ -78,8 +103,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                     type="time"
                     labelText="Hora"
                     placeholder="Ingresá la hora del muestreo"
-                    required={true}
-                    register={register}
+                    value={time}
+                    onChange={handleFieldChange('time')}
                 />
             </div>
             <div className="flex-1">
@@ -87,8 +112,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                     id={`sampling_point_${id}_illumination_type`}
                     labelText="Tipo de iluminación"
                     options={tiposIluminacion}
-                    required={true}
-                    register={register}
+                    value={illuminationType}
+                    onChange={handleFieldChange('illuminationType')}
                 />
             </div>
         </div>
@@ -100,8 +125,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                     id={`sampling_point_${id}_source_type`}
                     labelText="Tipo de fuente"
                     options={tiposFuente}
-                    required={true}
-                    register={register}
+                    value={sourceType}
+                    onChange={handleFieldChange('sourceType')}
                 />
             </div>
             <div className="flex-1">
@@ -109,8 +134,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                     id={`sampling_point_${id}_illumination`}
                     labelText="Iluminación"
                     options={iluminaciones}
-                    required={true}
-                    register={register}
+                    value={illumination}
+                    onChange={handleFieldChange('illumination')}
                 />
             </div>
         </div>
@@ -123,8 +148,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                     type="text"
                     labelText="Uniformidad de iluminancia"
                     placeholder="Ingresá la uniformidad"
-                    required={true}
-                    register={register}
+                    value={luminanceUniformity}
+                    onChange={handleFieldChange('luminanceUniformity')}
                 />
             </div>
             <div className="flex-1">
@@ -133,8 +158,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                     type="text"
                     labelText="Valor medio (Lux)"
                     placeholder="Ingresá el valor medio"
-                    required={true}
-                    register={register}
+                    value={averageValue}
+                    onChange={handleFieldChange('averageValue')}
                 />
             </div>
         </div>
@@ -146,8 +171,8 @@ export const PuntoMuestreo = ({register, id, displayIndex = 1, onDelete, showDel
                 type="text"
                 labelText="Valor requerido según anexo"
                 placeholder="Ingresá el valor requerido"
-                required={true}
-                register={register}
+                value={requiredValue}
+                onChange={handleFieldChange('requiredValue')}
             />
         </div>
 

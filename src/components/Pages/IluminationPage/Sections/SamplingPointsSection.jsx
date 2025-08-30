@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import InputForm from "../../../Ui/InputForm"
 import Section from "../../../Ui/Section"
-import PuntoMuestreo from "../../../Ui/PuntoMuestreo"
+import PuntoMuestreo from "../../../Ui/SamplingPoint"
+import Button from "../../../Ui/Button"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useIluminationStore } from "../Storage/IluminationStorage";
 
-export const SamplingPointsSection = ({registerWithAutoSave, isCollapsed, onToggle}) => {
+export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
+  const samplingPoints = useIluminationStore((state) => state.samplingPoints);
+  const addSamplingPoint = useIluminationStore((state) => state.addSamplingPoint);
+  const removeSamplingPoint = useIluminationStore((state) => state.removeSamplingPoint);
+  const companyName = useIluminationStore((state) => state.company.companyName);
+  
+  function eliminarPuntoMuestreo(pointId){
+    removeSamplingPoint(pointId);
+  }
+  // Estados locales para la gestión de puntos de muestreo
   return (
     <>
       <Section
@@ -14,20 +26,14 @@ export const SamplingPointsSection = ({registerWithAutoSave, isCollapsed, onTogg
       >
         {/* Contenedor scrolleable para los puntos de muestreo */}
         <div className="puntos-muestreo-container space-y-4 pr-2 mb-4">
-          {puntosMuestreo.map((punto) => (
+          {samplingPoints.map((punto) => (
             <div
               key={punto.id}
-              className={`transition-all duration-125 ease-out ${
-                animatingItems.has(punto.id)
-                  ? "opacity-0 transform -translate-y-4 scale-95"
-                  : "opacity-100 transform translate-y-0 scale-100"
-              }`}
             >
               <PuntoMuestreo
-                register={registerWithAutoSave}
                 id={punto.id}
                 displayIndex={punto.displayIndex}
-                onDelete={eliminarPuntoMuestreo}
+                onDelete={() => eliminarPuntoMuestreo(punto.id)}
               />
             </div>
           ))}
@@ -36,8 +42,6 @@ export const SamplingPointsSection = ({registerWithAutoSave, isCollapsed, onTogg
             id="sampling_observations"
             useArea={true}
             labelText="Observaciones"
-            required={true}
-            register={registerWithAutoSave}
           />
         </div>
 
@@ -46,7 +50,7 @@ export const SamplingPointsSection = ({registerWithAutoSave, isCollapsed, onTogg
           <Button
             type="button"
             variant="success"
-            onClick={agregarPuntoMuestreo}
+            onClick={addSamplingPoint}
             className="flex items-center gap-2 print:hidden"
           >
             <FontAwesomeIcon icon={faPlus} />

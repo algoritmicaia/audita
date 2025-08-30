@@ -9,7 +9,6 @@ export const InputForm = ({
   labelText, 
   placeholder, 
   required = false,
-  register,
   useArea = false,
   rows = 4,
   ...props 
@@ -25,7 +24,6 @@ export const InputForm = ({
           id={id}
           placeholder={placeholder}
           rows={rows}
-          {...register(id, { required: required })}
           {...props}
         />
       ) : (
@@ -33,7 +31,6 @@ export const InputForm = ({
           id={id}
           type={type}
           placeholder={placeholder}
-          {...register(id, { required: required })}
           {...props}
         />
       )}

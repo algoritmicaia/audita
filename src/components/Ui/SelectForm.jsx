@@ -7,7 +7,6 @@ export const SelectForm = ({
   labelText, 
   options = [],
   required = false,
-  register,
   placeholder = "Selecciona una opción",
   ...props 
 }) => {
@@ -20,7 +19,6 @@ export const SelectForm = ({
       <Select 
         id={id}
         options={options}
-        {...register(id, { required: required })}
         {...props}
       >
         <option value="" disabled>
