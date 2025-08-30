@@ -3,7 +3,7 @@ import Header from "../../Ui/Header";
 import Footer from "../../Ui/Footer";
 import Button from "../../Ui/Button";
 import { HeroSection } from "../../Ui/HeroSection";
-import { Card } from "../../Ui/card";
+import { Card } from "../../Ui/Card"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
