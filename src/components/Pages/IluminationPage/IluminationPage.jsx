@@ -2,7 +2,6 @@ import React from "react";
 import Header from "../../Ui/Header";
 import Footer from "../../Ui/Footer";
 import Button from "../../Ui/Button";
-import { useEffect, useState } from "react";
 import { HeroSection } from "../../Ui/HeroSection";
 import { Card } from "../../Ui/card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,7 +11,6 @@ import {
   faSignature,
 } from "@fortawesome/free-solid-svg-icons";
 import { CompanySection } from "./Sections/CompanySection";
-import { ResponsibleSection } from "./Sections/ResponsibleSection";
 import { MeasurementSection } from "./Sections/MeasurementSection";
 import { ConclusionsSection } from "./Sections/ConclusionsSection";
 import { useSectionsCollapse } from "./Hooks/useSectionsCollapse";
