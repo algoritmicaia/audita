@@ -6,48 +6,37 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { useIluminationStore } from '../Pages/IluminationPage/Storage/IluminationStorage'
 
 export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton = true}) => {
-  // Obtener los datos del punto de muestreo desde el store
-  const samplingPoints = useIluminationStore((state) => state.samplingPoints);
+  const samplingPoints = useIluminationStore((state) => state.samplingPoints.samplingPoints);
   const setSamplingPointField = useIluminationStore((state) => state.setSamplingPointField);
   
-  // Encontrar el punto específico por ID
+  // Encontrar el punto actual
   const currentPoint = samplingPoints.find(point => point.id === id) || {};
-  
-  // Extraer los valores del punto actual
-  const {
-    sector = "",
-    section = "",
-    time = "",
-    illuminationType = "",
-    sourceType = "",
-    illumination = "",
-    luminanceUniformity = "",
-    averageValue = "",
-    requiredValue = "",
-  } = currentPoint;
 
-  // Función helper para manejar cambios de campos
   const handleFieldChange = (field) => (e) => {
     setSamplingPointField(id, field, e.target.value);
   };
 
-  const tiposIluminacion = [
-    { value: "Natural", label: "Natural" },
-    { value: "Artificial", label: "Artificial" },
-    { value: "Mixta", label: "Mixta" }
-  ];
+  const handleSelectChange = (field) => (e) => {
+    setSamplingPointField(id, field, e.target.value);
+  };
 
-  const tiposFuente = [
-    { value: "Incandescente", label: "Incandescente" },
-    { value: "Descarga", label: "Descarga" },
-    { value: "Mixta", label: "Mixta" }
-  ];
-
-  const iluminaciones = [
-    { value: "General", label: "General" },
-    { value: "Localizada", label: "Localizada" },
-    { value: "Mixta", label: "Mixta" }
-  ];
+    const tiposIluminacion = [
+        { value: "Natural", label: "Natural" },
+        { value: "Artificial", label: "Artificial" },
+        { value: "Mixta", label: "Mixta" }
+      ];
+    
+      const tiposFuente = [
+        { value: "Incandescente", label: "Incandescente" },
+        { value: "Descarga", label: "Descarga" },
+        { value: "Mixta", label: "Mixta" }
+      ];
+    
+      const iluminaciones = [
+        { value: "General", label: "General" },
+        { value: "Localizada", label: "Localizada" },
+        { value: "Mixta", label: "Mixta" }
+      ];
 
   const handleDelete = () => {
     if (onDelete) {
@@ -78,7 +67,7 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                 type="text"
                 labelText="Sector"
                 placeholder="Ingresá el nombre del sector"
-                value={sector}
+                value={currentPoint.sector || ""}
                 onChange={handleFieldChange('sector')}
             />
         </div>
@@ -90,7 +79,7 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                 type="text"
                 labelText="Sección/tipo/puesto"
                 placeholder="Ingresá la sección, tipo o puesto"
-                value={section}
+                value={currentPoint.section || ""}
                 onChange={handleFieldChange('section')}
             />
         </div>
@@ -103,7 +92,7 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                     type="time"
                     labelText="Hora"
                     placeholder="Ingresá la hora del muestreo"
-                    value={time}
+                    value={currentPoint.time || ""}
                     onChange={handleFieldChange('time')}
                 />
             </div>
@@ -112,8 +101,8 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                     id={`sampling_point_${id}_illumination_type`}
                     labelText="Tipo de iluminación"
                     options={tiposIluminacion}
-                    value={illuminationType}
-                    onChange={handleFieldChange('illuminationType')}
+                    value={currentPoint.illuminationType || ""}
+                    onChange={handleSelectChange('illuminationType')}
                 />
             </div>
         </div>
@@ -125,8 +114,8 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                     id={`sampling_point_${id}_source_type`}
                     labelText="Tipo de fuente"
                     options={tiposFuente}
-                    value={sourceType}
-                    onChange={handleFieldChange('sourceType')}
+                    value={currentPoint.sourceType || ""}
+                    onChange={handleSelectChange('sourceType')}
                 />
             </div>
             <div className="flex-1">
@@ -134,8 +123,8 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                     id={`sampling_point_${id}_illumination`}
                     labelText="Iluminación"
                     options={iluminaciones}
-                    value={illumination}
-                    onChange={handleFieldChange('illumination')}
+                    value={currentPoint.illumination || ""}
+                    onChange={handleSelectChange('illumination')}
                 />
             </div>
         </div>
@@ -148,7 +137,7 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                     type="text"
                     labelText="Uniformidad de iluminancia"
                     placeholder="Ingresá la uniformidad"
-                    value={luminanceUniformity}
+                    value={currentPoint.luminanceUniformity || ""}
                     onChange={handleFieldChange('luminanceUniformity')}
                 />
             </div>
@@ -158,7 +147,7 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                     type="text"
                     labelText="Valor medio (Lux)"
                     placeholder="Ingresá el valor medio"
-                    value={averageValue}
+                    value={currentPoint.averageValue || ""}
                     onChange={handleFieldChange('averageValue')}
                 />
             </div>
@@ -171,7 +160,7 @@ export const PuntoMuestreo = ({id, displayIndex = 1, onDelete, showDeleteButton 
                 type="text"
                 labelText="Valor requerido según anexo"
                 placeholder="Ingresá el valor requerido"
-                value={requiredValue}
+                value={currentPoint.requiredValue || ""}
                 onChange={handleFieldChange('requiredValue')}
             />
         </div>

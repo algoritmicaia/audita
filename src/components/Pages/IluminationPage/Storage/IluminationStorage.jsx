@@ -21,9 +21,12 @@ export const useIluminationStore = create()(
           },
         })),
 
-      samplingPoints: [],
+      samplingPoints: {
+        samplingPoints: [],
+        observations: "",
+      },
       addSamplingPoint: () => {
-        const currentPoints = get().samplingPoints;
+        const currentPoints = get().samplingPoints.samplingPoints;
         const newPoint = {
           id: Date.now(), // ID único basado en timestamp
           displayIndex: currentPoints.length + 1,
@@ -38,26 +41,42 @@ export const useIluminationStore = create()(
           requiredValue: "",
         };
         set((state) => ({
-          samplingPoints: [...state.samplingPoints, newPoint],
+          samplingPoints: {
+            ...state.samplingPoints,
+            samplingPoints: [...state.samplingPoints.samplingPoints, newPoint],
+          },
         }));
       },
       removeSamplingPoint: (pointId) => {
         set((state) => ({
-          samplingPoints: state.samplingPoints
-            .filter((point) => point.id !== pointId)
-            .map((point, index) => ({
-              ...point,
-              displayIndex: index + 1,
-            })),
+          samplingPoints: {
+            ...state.samplingPoints,
+            samplingPoints: state.samplingPoints.samplingPoints
+              .filter((point) => point.id !== pointId)
+              .map((point, index) => ({
+                ...point,
+                displayIndex: index + 1,
+              })),
+          },
         }));
       },
       setSamplingPointField: (pointId, field, value) =>
         set((state) => ({
-          samplingPoints: state.samplingPoints.map((point) =>
-            point.id === pointId
-              ? { ...point, [field]: value }
-              : point
-          ),
+          samplingPoints: {
+            ...state.samplingPoints,
+            samplingPoints: state.samplingPoints.samplingPoints.map((point) =>
+              point.id === pointId
+                ? { ...point, [field]: value }
+                : point
+            ),
+          },
+        })),
+      setSamplingObservations: (value) =>
+        set((state) => ({
+          samplingPoints: {
+            ...state.samplingPoints,
+            observations: value,
+          },
         })),
     }),
     {

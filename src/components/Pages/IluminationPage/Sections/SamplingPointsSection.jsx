@@ -8,14 +8,20 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useIluminationStore } from "../Storage/IluminationStorage";
 
 export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
-  const samplingPoints = useIluminationStore((state) => state.samplingPoints);
+  const samplingPoints = useIluminationStore((state) => state.samplingPoints.samplingPoints);
+  const observations = useIluminationStore((state) => state.samplingPoints.observations);
   const addSamplingPoint = useIluminationStore((state) => state.addSamplingPoint);
   const removeSamplingPoint = useIluminationStore((state) => state.removeSamplingPoint);
-  const companyName = useIluminationStore((state) => state.company.companyName);
+  const setSamplingObservations = useIluminationStore((state) => state.setSamplingObservations);
   
   function eliminarPuntoMuestreo(pointId){
     removeSamplingPoint(pointId);
   }
+
+  const handleObservationsChange = (e) => {
+    setSamplingObservations(e.target.value);
+  };
+
   // Estados locales para la gestión de puntos de muestreo
   return (
     <>
@@ -42,6 +48,8 @@ export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
             id="sampling_observations"
             useArea={true}
             labelText="Observaciones"
+            value={observations}
+            onChange={handleObservationsChange}
           />
         </div>
 
