@@ -17,9 +17,11 @@ import { MeasurementSection } from "./Sections/MeasurementSection";
 import { ConclusionsSection } from "./Sections/ConclusionsSection";
 import { useSectionsCollapse } from "./Hooks/useSectionsCollapse";
 import { SamplingPointsSection } from "./Sections/SamplingPointsSection";
+import { useIluminationStore } from "./Storage/IluminationStorage";
 
 function IluminationForm() {
   const [sections, dispatch] = useSectionsCollapse();
+  const resetAllData = useIluminationStore((state) => state.resetAllData);
 
   const downloadPDF = async () => {
     dispatch({ type: "expandAll" });
@@ -28,6 +30,12 @@ function IluminationForm() {
     setTimeout(() => {
       window.print();
     }, 100);
+  };
+
+  const handleClear = () => {
+    if (window.confirm("¿Estás seguro de que quieres limpiar todos los datos? Esta acción no se puede deshacer.")) {
+      resetAllData();
+    }
   };
 
   return (
@@ -77,8 +85,6 @@ function IluminationForm() {
             onToggle={() => dispatch({ type: "toggle", key: "empresa" })}
           />
 
-          <div className="break-before-page"></div>
-
           <MeasurementSection
             isCollapsed={sections.medicion}
             onToggle={() => dispatch({ type: "toggle", key: "medicion" })}
@@ -93,15 +99,19 @@ function IluminationForm() {
 
           <div className="break-inside-avoid">
             <ConclusionsSection
-                isCollapsed={sections.conclusiones}
+              isCollapsed={sections.conclusiones}
               onToggle={() => dispatch({ type: "toggle", key: "conclusiones" })}
             />
           </div>
 
-          {/* Indicador de autoguardado */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-            <div className="flex items-center space-x-3 print:hidden">
-              <Button type="submit" variant="primary" onClick={downloadPDF}>
+          <div className="flex justify-center items-center gap-4 pt-4 border-t border-gray-200">
+            <div className="print:hidden">
+              <Button variant="secondary" onClick={handleClear}>
+                Limpiar
+              </Button>
+            </div>
+            <div className="print:hidden">
+              <Button variant="primary" onClick={downloadPDF}>
                 Descargar PDF
               </Button>
             </div>

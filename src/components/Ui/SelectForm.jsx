@@ -8,6 +8,8 @@ export const SelectForm = ({
   options = [],
   required = false,
   placeholder = "Selecciona una opción",
+  value,
+  onChange,
   ...props 
 }) => {
   return (
@@ -19,6 +21,8 @@ export const SelectForm = ({
       <Select 
         id={id}
         options={options}
+        value={value}
+        onChange={onChange}
         {...props}
       >
         <option value="" disabled>
