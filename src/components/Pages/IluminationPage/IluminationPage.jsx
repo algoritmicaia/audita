@@ -38,8 +38,8 @@ function IluminationForm() {
 
   return (
     <>
-      <Header title={"Audita"} />
       <div className="max-w-4xl mx-auto px-4 py-4">
+        <Header />
         <HeroSection />
 
         {/* cards */}
