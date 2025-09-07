@@ -16,8 +16,11 @@ import { ConclusionsSection } from "./Sections/ConclusionsSection";
 import { useSectionsCollapse } from "./Hooks/useSectionsCollapse";
 import { SamplingPointsSection } from "./Sections/SamplingPointsSection";
 import { useIluminationStore } from "./Storage/IluminationStorage";
+import { Analytics } from '@vercel/analytics/react';
 
-function IluminationForm() {
+
+
+function IluminationPage() {
   const [sections, dispatch] = useSectionsCollapse();
   const resetAllData = useIluminationStore((state) => state.resetAllData);
 
@@ -38,6 +41,8 @@ function IluminationForm() {
 
   return (
     <>
+      <Analytics />
+
       <div className="max-w-4xl mx-auto px-4 py-4">
         <Header />
         <HeroSection />
@@ -122,4 +127,4 @@ function IluminationForm() {
   );
 }
 
-export default IluminationForm;
+export default IluminationPage;
