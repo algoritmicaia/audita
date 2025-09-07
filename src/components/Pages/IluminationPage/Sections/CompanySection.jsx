@@ -24,7 +24,7 @@ export const CompanySection = ({ isCollapsed, onToggle }) => {
           onToggle={() => onToggle()}
         >
           <div className="space-y-4 flex gap-4">
-            <div className="flex-1">
+            <div className="flex-1 print:hidden">
               <InputForm
                 id="company_name"
                 type="text"

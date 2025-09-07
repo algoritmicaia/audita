@@ -72,18 +72,21 @@ export const useIluminationStore = create()(
           const now = new Date();
           const currentTime = now.toTimeString().slice(0, 5); // Formato HH:MM
           
+          // Si no es el primer punto, tomar valores del punto anterior
+          const previousPoint = currentPoints.length > 0 ? currentPoints[currentPoints.length - 1] : null;
+          
           const newPoint = {
             id: Date.now(), // ID único basado en timestamp
             displayIndex: currentPoints.length + 1,
-            sector: "",
-            section: "",
+            sector: previousPoint ? previousPoint.sector : "",
+            section: "", // Siempre vacío para permitir personalización
             time: currentTime, // Hora actual por defecto
-            illuminationType: "",
-            sourceType: "",
-            illumination: "",
-            luminanceUniformity: "",
-            averageValue: "",
-            requiredValue: "",
+            illuminationType: previousPoint ? previousPoint.illuminationType : "",
+            sourceType: previousPoint ? previousPoint.sourceType : "",
+            illumination: previousPoint ? previousPoint.illumination : "",
+            luminanceUniformity: previousPoint ? previousPoint.luminanceUniformity : "",
+            measuredValue: "", // Siempre vacío para permitir medición específica
+            requiredValue: previousPoint ? previousPoint.requiredValue : "",
           };
           set((state) => ({
             samplingPoints: {
