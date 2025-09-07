@@ -14,8 +14,26 @@ export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
   const removeSamplingPoint = useIluminationStore((state) => state.removeSamplingPoint);
   const setSamplingObservations = useIluminationStore((state) => state.setSamplingObservations);
   
+  // Estado para controlar animaciones de eliminación
+  const [removingPoints, setRemovingPoints] = useState(new Set());
+  
   function eliminarPuntoMuestreo(pointId){
-    removeSamplingPoint(pointId);
+    // Agregar el punto a la lista de puntos que se están eliminando
+    setRemovingPoints(prev => new Set([...prev, pointId]));
+    
+    // Después de la animación, eliminar el punto del store
+    setTimeout(() => {
+      removeSamplingPoint(pointId);
+      setRemovingPoints(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(pointId);
+        return newSet;
+      });
+    }, 300); // Duración de la animación
+  }
+
+  function addNewSamplingPoint(){
+    addSamplingPoint();
   }
 
   const handleObservationsChange = (e) => {
@@ -35,6 +53,11 @@ export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
           {samplingPoints.map((punto) => (
             <div
               key={punto.id}
+              className={`transition-all duration-300 ${
+                removingPoints.has(punto.id) 
+                  ? 'animate-out fade-out-0 slide-out-to-bottom-4 opacity-0 scale-95' 
+                  : ''
+              }`}
             >
               <SamplingPoint
                 id={punto.id}
@@ -58,10 +81,10 @@ export const SamplingPointsSection = ({isCollapsed, onToggle}) => {
           <Button
             type="button"
             variant="success"
-            onClick={addSamplingPoint}
+            onClick={addNewSamplingPoint}
             className="flex items-center gap-2 print:hidden"
           >
-            <FontAwesomeIcon icon={faPlus} />
+            <FontAwesomeIcon icon={faPlus}/>
             Añadir punto de muestreo
           </Button>
         </div>
