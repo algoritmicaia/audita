@@ -1,6 +1,6 @@
 import React from "react";
 
-export const HeroSection = () => {
+export const HeroSection = ({title, text, imagePath}) => {
   return (
     <section className="bg-white py-8">
       <div className="max-w-6xl mx-auto">
@@ -8,20 +8,18 @@ export const HeroSection = () => {
           {/* Texto a la izquierda */}
           <div className="flex-1 text-left">
             <h1 className="text-2xl lg:text-3xl font-bold text-blue-800 mb-4 lg:mb-6 leading-tight">
-              Con Audita, simplificamos tus protocolos de higiene y seguridad
+              {title}
             </h1>
 
             <p className="text-sm lg:text-lg text-gray-700 leading-relaxed">
-              Te invitamos a probar nuestra solución que digitaliza los
-              protocolos reglamentarios y ayuda a agilizar la carga de datos
-              para presentar en tu empresa.
+             {text}
             </p>
           </div>
 
           {/* Imagen a la derecha */}
           <div className="flex-shrink-0 flex justify-end">
             <img
-              src="/lic.png"
+              src={imagePath}
               alt="Profesional con equipo de medición"
               className="w-32 lg:max-w-64 h-auto object-contain"
             />

@@ -180,24 +180,6 @@ export const SamplingPoint = ({ id, displayIndex = 1, onDelete }) => {
           </div>
         </div>
         <div className="flex-1">
-          <div className="print:hidden">
-            <InputForm
-              id={`sampling_point_${id}_average_value`}
-              type="text"
-              labelText="Valor medido (Lux)"
-              placeholder="Ingresá el valor medido"
-              value={currentPoint.measuredValue || ""}
-              onChange={handleFieldChange("measuredValue")}
-            />
-          </div>
-          <div className="hidden print:block">
-             <Label>Valor medido (Lux): <span className="font-bold">{currentPoint.measuredValue || ""}</span></Label>
-          </div>
-        </div>
-      </div>
-
-      {/* Valor requerido - ancho completo */}
-      <div className="mb-4">
         <div className="print:hidden">
           <InputForm
             id={`sampling_point_${id}_required_value`}
@@ -210,6 +192,26 @@ export const SamplingPoint = ({ id, displayIndex = 1, onDelete }) => {
         </div>
           <div className="hidden print:block">
              <Label>Valor requerido según anexo: <span className="font-bold">{currentPoint.requiredValue || ""}</span></Label>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Valor requerido - ancho completo */}
+      <div className="mb-4">
+
+      <div className="print:hidden">
+            <InputForm
+              id={`sampling_point_${id}_average_value`}
+              type="text"
+              labelText="Valor medido (Lux)"
+              placeholder="Ingresá el valor medido"
+              value={currentPoint.measuredValue || ""}
+              onChange={handleFieldChange("measuredValue")}
+            />
+          </div>
+          <div className="hidden print:block">
+             <Label>Valor medido (Lux): <span className="font-bold">{currentPoint.measuredValue || ""}</span></Label>
           </div>
       </div>
     </div>
