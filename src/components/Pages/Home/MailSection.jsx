@@ -133,83 +133,103 @@ export const MailSection = () => {
           Argentina.
         </p>
         <div className="w-16 h-0.5 bg-white mx-auto mb-8" />
-        <h3 className="text-xl font-bold text-white mb-8">
-          Dejanos un mensaje con tu experiencia.
-        </h3>
 
         <div className="max-w-md mx-auto">
           {!isSubmitted ? (
-            <form onSubmit={handleSubmit} noValidate className="space-y-6">
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Ingrese el correo electrónico*"
-                  value={email}
-                  onChange={handleEmailChange}
-                  required
-                  className={`block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-gray-400 focus:outline-none transition-colors duration-200 text-gray-800 ${
-                    emailError 
-                      ? "border-red-500 focus:border-red-500" 
-                      : "border-gray-300 focus:border-blue-500"
+            <>
+              <h3 className="text-xl font-bold text-white mb-8">
+                Dejanos un mensaje con tu experiencia.
+              </h3>
+              <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                <div>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Ingrese el correo electrónico*"
+                    value={email}
+                    onChange={handleEmailChange}
+                    required
+                    className={`block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-gray-400 focus:outline-none transition-colors duration-200 text-gray-800 ${
+                      emailError
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:border-blue-500"
+                    }`}
+                  />
+                  {emailError && (
+                    <p className="mt-1 text-sm text-red-200 text-left">
+                      {emailError}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <textarea
+                    name="message"
+                    placeholder="Dejanos un mensaje*"
+                    value={message}
+                    onChange={handleMessageChange}
+                    rows={4}
+                    required
+                    minLength={10}
+                    maxLength={2000}
+                    className={`block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-gray-400 focus:outline-none transition-colors duration-200 resize-vertical min-h-[100px] text-gray-800 ${
+                      messageError
+                        ? "border-red-500 :ring-red-200 focus:border-red-500"
+                        : "border-gray-300:ring-blue-200 focus:border-blue-500"
+                    }`}
+                  />
+                  {messageError && (
+                    <p className="mt-1 text-sm text-red-200 text-left">
+                      {messageError}
+                    </p>
+                  )}
+                  <p className="mt-1 text-xs text-gray-300 text-right">
+                    {message.length}/2000 caracteres
+                  </p>
+                </div>
+
+                {/* Honeypot accesible (no uses display:none) */}
+                <div className="sr-only" aria-hidden="true">
+                  <label htmlFor="_honey">No completar</label>
+                  <input id="_honey" name="_honey" type="text" tabIndex="-1" />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={
+                    loading ||
+                    emailError ||
+                    messageError ||
+                    !email.trim() ||
+                    !message.trim()
+                  }
+                  className={`w-full font-medium px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                    loading ||
+                    emailError ||
+                    messageError ||
+                    !email.trim() ||
+                    !message.trim()
+                      ? "bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed"
+                      : "bg-white text-gray-800 hover:bg-gray-100 border-gray-300 focus:ring-blue-200 focus:border-blue-500"
                   }`}
-                />
-                {emailError && (
-                  <p className="mt-1 text-sm text-red-200 text-left">{emailError}</p>
-                )}
-              </div>
+                >
+                  {loading ? "Enviando…" : "Enviar"}
+                </button>
 
-              <div>
-                <textarea
-                  name="message"
-                  placeholder="Dejanos un mensaje*"
-                  value={message}
-                  onChange={handleMessageChange}
-                  rows={4}
-                  required
-                  minLength={10}
-                  maxLength={2000}
-                  className={`block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-gray-400 focus:outline-none transition-colors duration-200 resize-vertical min-h-[100px] text-gray-800 ${
-                    messageError 
-                      ? "border-red-500 :ring-red-200 focus:border-red-500" 
-                      : "border-gray-300:ring-blue-200 focus:border-blue-500"
-                  }`}
-                />
-                {messageError && (
-                  <p className="mt-1 text-sm text-red-200 text-left">{messageError}</p>
-                )}
-                <p className="mt-1 text-xs text-gray-300 text-right">
-                  {message.length}/2000 caracteres
-                </p>
-              </div>
-
-              {/* Honeypot accesible (no uses display:none) */}
-              <div className="sr-only" aria-hidden="true">
-                <label htmlFor="_honey">No completar</label>
-                <input id="_honey" name="_honey" type="text" tabIndex="-1" />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || emailError || messageError || !email.trim() || !message.trim()}
-                className={`w-full font-medium px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 transition-colors duration-200 ${
-                  loading || emailError || messageError || !email.trim() || !message.trim()
-                    ? "bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed"
-                    : "bg-white text-gray-800 hover:bg-gray-100 border-gray-300 focus:ring-blue-200 focus:border-blue-500"
-                }`}
-              >
-                {loading ? "Enviando…" : "Enviar"}
-              </button>
-
-              <div aria-live="polite" className="text-sm min-h-[1.25rem] text-white">
-                {err}
-              </div>
-            </form>
+                <div
+                  aria-live="polite"
+                  className="text-sm min-h-[1.25rem] text-white"
+                >
+                  {err}
+                </div>
+              </form>
+            </>
           ) : (
             <div className="text-center">
               <h4 className="text-2xl font-bold text-white mb-4">¡Gracias!</h4>
               <p className="text-white text-lg">
-                Tu mensaje ha sido enviado exitosamente. Te contactaremos pronto.
+                Tu mensaje ha sido enviado exitosamente. Te contactaremos
+                pronto.
               </p>
             </div>
           )}
