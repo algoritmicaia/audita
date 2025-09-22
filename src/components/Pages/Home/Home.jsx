@@ -12,6 +12,7 @@ import {
   fa3,
   fa4,
   faArrowRight,
+  faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { TitleWithParagraph } from "../../Ui/TitleWithParagraph";
 import { StepSection } from "../../Ui/StepSection";
@@ -23,7 +24,13 @@ export const Home = () => {
     <>
       <div className="max-w-4xl mx-auto px-4 py-4">
         <Header />
-        <HeroSection />
+        <HeroSection
+          title="Con Audita, simplificamos tus protocolos de higiene y seguridad"
+          text="Te invitamos a probar nuestra solución que digitaliza los
+protocolos reglamentarios y ayuda a agilizar la carga de datos
+para presentar en tu empresa."
+          imagePath="/lic.png"
+        />
 
         <TitleWithParagraph
           title={"¿Cómo te ayuda Audita en tu inspección?"}
@@ -33,7 +40,7 @@ export const Home = () => {
         />
 
         {/* cards */}
-        <div className="flex gap-6 py-4 print:hidden">
+        <div className="flex flex-col md:flex-row gap-6 py-4 print:hidden">
           <div className="flex-1">
             <Card
               icon={
@@ -70,73 +77,142 @@ export const Home = () => {
 
       <div className="max-w-4xl mx-auto px-4 py-4">
         <TitleWithParagraph
-          title={"Digitalizar tu protocolo es simple y rápido, solo seguí estos pasos:"}
+          title={
+            "Digitalizar tu protocolo es simple y rápido, solo seguí estos pasos:"
+          }
           text={""}
         />
 
-        <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex items-center gap-4 py-6 print:hidden">
-          <div className="flex-1">
-            <Card
-              icon={
-                <FontAwesomeIcon icon={fa1} className="text-black text-lg" />
-              }
-              text={"Accedé al formulario online"}
-              type="secondary"
-            />
+        <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 py-6 print:hidden">
+          {/* Layout horizontal para pantallas grandes */}
+          <div className="hidden md:flex items-center gap-4">
+            <div className="flex-1">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa1} className="text-black text-lg" />
+                }
+                text={"Accedé al formulario online"}
+                type="secondary"
+              />
+            </div>
+
+            <div className="flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                className="text-green-800 text-2xl"
+              />
+            </div>
+
+            <div className="flex-1">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa2} className="text-black text-lg" />
+                }
+                text={"Ingresá los datos de las mediciones"}
+                type="secondary"
+              />
+            </div>
+
+            <div className="flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                className="text-green-800 text-2xl"
+              />
+            </div>
+
+            <div className="flex-1">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa3} className="text-black text-lg" />
+                }
+                text={"Descargá tu informe PDF"}
+                type="secondary"
+              />
+            </div>
+
+            <div className="flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                className="text-green-800 text-2xl"
+              />
+            </div>
+
+            <div className="flex-1">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa4} className="text-black text-lg" />
+                }
+                text={"Firmalo de forma digital"}
+                type="secondary"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center justify-center">
-            <FontAwesomeIcon
-              icon={faArrowRight}
-              className="text-green-800 text-2xl"
-            />
-          </div>
+          {/* Layout vertical para pantallas pequeñas */}
+          <div className="flex flex-col items-center gap-4 md:hidden">
+            <div className="w-full">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa1} className="text-black text-lg" />
+                }
+                text={"Accedé al formulario online"}
+                type="secondary"
+              />
+            </div>
 
-          <div className="flex-1">
-            <Card
-              icon={
-                <FontAwesomeIcon icon={fa2} className="text-black text-lg" />
-              }
-              text={"Ingresá los datos de las mediciones"}
-              type="secondary"
-            />
-          </div>
+            <div className="flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faArrowDown}
+                className="text-green-800 text-2xl"
+              />
+            </div>
 
-          <div className="flex items-center justify-center">
-            <FontAwesomeIcon
-              icon={faArrowRight}
-              className="text-green-800 text-2xl"
-            />
-          </div>
+            <div className="w-full">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa2} className="text-black text-lg" />
+                }
+                text={"Ingresá los datos de las mediciones"}
+                type="secondary"
+              />
+            </div>
 
-          <div className="flex-1">
-            <Card
-              icon={
-                <FontAwesomeIcon icon={fa3} className="text-black text-lg" />
-              }
-              text={"Descargá tu informe PDF"}
-              type="secondary"
-            />
-          </div>
+            <div className="flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faArrowDown}
+                className="text-green-800 text-2xl"
+              />
+            </div>
 
-          <div className="flex items-center justify-center">
-            <FontAwesomeIcon
-              icon={faArrowRight}
-              className="text-green-800 text-2xl"
-            />
-          </div>
+            <div className="w-full">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa3} className="text-black text-lg" />
+                }
+                text={"Descargá tu informe PDF"}
+                type="secondary"
+              />
+            </div>
 
-          <div className="flex-1">
-            <Card
-              icon={
-                <FontAwesomeIcon icon={fa4} className="text-black text-lg" />
-              }
-              text={"Firmalo de forma digital"}
-              type="secondary"
-            />
+            <div className="flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faArrowDown}
+                className="text-green-800 text-2xl"
+              />
+            </div>
+
+            <div className="w-full">
+              <Card
+                icon={
+                  <FontAwesomeIcon icon={fa4} className="text-black text-lg" />
+                }
+                text={"Firmalo de forma digital"}
+                type="secondary"
+              />
+            </div>
           </div>
         </div>
-        
+
         {/* Botón Comenzar ahora */}
         <div className="flex flex-col items-center py-6">
           <Button
@@ -147,7 +223,8 @@ export const Home = () => {
             Comenzar ahora
           </Button>
           <p className="text-xs text-gray-500 text-center max-w-md">
-            *Esta primera versión incluye únicamente el formulario del Protocolo de Medición de Iluminación establecido en la Resolución SRT 84/2012.
+            *Esta primera versión incluye únicamente el formulario del Protocolo
+            de Medición de Iluminación establecido en la Resolución SRT 84/2012.
           </p>
         </div>
       </div>
@@ -156,14 +233,14 @@ export const Home = () => {
         <TitleWithParagraph
           title={"¿Cómo firmar digitalmente el informe?"}
           text={
-            "Podés usar herramientas gratuitas como iLovePDF. A continuación te explicaremos como hacerlo para que puedas presentarlo firmado:"
+            "Podés usar herramientas gratuitas como <a href='https://www.ilovepdf.com/es/firmar-pdf' target='_blank' rel='noopener noreferrer' class='text-green-600 hover:text-green-800 underline'>iLovePDF</a>. A continuación te explicaremos como hacerlo para que puedas presentarlo firmado:"
           }
         />
 
         {/* Ejemplo de uso del componente StepSection */}
         <StepSection
           stepNumber="1"
-          description="Accedé a iLovePDF y seleccioná la opción 'Firmar PDF'. Luego arrastrá tu archivo o hacé clic en 'Seleccionar archivo PDF' para subirlo."
+          description="Accedé a <a href='https://www.ilovepdf.com/es/firmar-pdf' target='_blank' rel='noopener noreferrer' class='text-green-600 hover:text-green-800 underline'>iLovePDF</a> y seleccioná la opción 'Firmar PDF'. Luego arrastrá tu archivo o hacé clic en 'Seleccionar archivo PDF' para subirlo."
           imageSrc="/1.png"
           imageAlt="Pantalla de iLovePDF mostrando la opción para subir PDF"
         />
@@ -197,7 +274,7 @@ export const Home = () => {
         />
       </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };

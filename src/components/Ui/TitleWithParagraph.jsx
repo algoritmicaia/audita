@@ -8,9 +8,10 @@ export const TitleWithParagraph = ({ title, text }) => {
           {title}
         </h1>
 
-        <p className="text-sm lg:text-lg text-gray-700 leading-relaxed">
-          {text}
-        </p>
+        <p 
+          className="text-sm lg:text-lg text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: text }}
+        />
       </div>
     </div>
   );

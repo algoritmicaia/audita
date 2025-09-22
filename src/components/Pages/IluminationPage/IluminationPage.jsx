@@ -44,12 +44,14 @@ function IluminationPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-4">
         <Header />
-        <HeroSection />
-
-
+        <HeroSection
+          title="Audita – Herramienta digital para protocolos de Higiene y Seguridad"
+          text="Audita permite completar y generar informes digitales de los protocolos reglamentarios establecidos por la Superintendencia de Riesgos del Trabajo (SRT) en Argentina."
+          imagePath="/profesionales.png"
+        />
 
         <div className="flex justify-center">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-6 pb-2 cursor-pointer transition-colors duration-200 flex items-center justify-between">
+          <h1 className="print:hidden text-2xl font-semibold text-gray-800 mb-6 pb-2 transition-colors duration-200 flex items-center justify-between">
             Completá el protocolo de medición de iluminación en el ambiente
           </h1>
 
@@ -81,7 +83,7 @@ function IluminationPage() {
           </div>
 
           {/* Declaración jurada */}
-          <div className="mb-6">
+          <div className="print:hidden mb-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Declaración jurada</h3>
             
             <div className="space-y-3 mb-6">
