@@ -16,6 +16,7 @@ import {
 import { TitleWithParagraph } from "../../Ui/TitleWithParagraph";
 import { StepSection } from "../../Ui/StepSection";
 import Button from "../../Ui/Button";
+import Footer from "../../Ui/Footer";
 
 export const Home = () => {
   return (
@@ -195,6 +196,8 @@ export const Home = () => {
           imageAlt="Pantalla de iLovePDF mostrando la opción para subir PDF"
         />
       </div>
+
+      <Footer/>
     </>
   );
 };

@@ -10,12 +10,14 @@ import { useSectionsCollapse } from "./Hooks/useSectionsCollapse";
 import { SamplingPointsSection } from "./Sections/SamplingPointsSection";
 import { useIluminationStore } from "./Storage/IluminationStorage";
 import { Analytics } from "@vercel/analytics/react";
+import { ModalPrivacy } from "../../Ui/ModalPrivacy";
 
 function IluminationPage() {
   const [sections, dispatch] = useSectionsCollapse();
   const resetAllData = useIluminationStore((state) => state.resetAllData);
   const [dataCorrect, setDataCorrect] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   const downloadPDF = async () => {
     dispatch({ type: "expandAll" });
@@ -103,7 +105,14 @@ function IluminationPage() {
                   className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <span className="text-sm text-gray-700 leading-relaxed">
-                  Acepto la Política de Privacidad y el uso de mis datos para la generación del informe.
+                  Acepto la{" "}
+                  <button 
+                    onClick={() => setIsPrivacyModalOpen(true)}
+                    className="text-blue-600 underline hover:text-blue-800 transition-colors"
+                  >
+                    Política de Privacidad
+                  </button>
+                  {" "}y el uso de mis datos para la generación del informe.
                 </span>
               </label>
             </div>
@@ -130,6 +139,12 @@ function IluminationPage() {
       </div>
 
       <Footer />
+
+      {/* Modal de Política de Privacidad */}
+      <ModalPrivacy
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
     </>
   );
 }
