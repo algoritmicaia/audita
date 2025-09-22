@@ -10,7 +10,11 @@ const Footer = () => {
     <footer className="print:hidden bg-gray-50 border-t border-b border-gray-300 py-8">
       {/* Left Section - Logo and Contact */}
       <div className="max-w-4xl mx-auto px-4 pb-4 items-center space-x-2">
-        <img src="/audita.png" alt="Audita Logo" />
+        <img 
+        src="/audita.png" 
+        alt="Audita Logo" 
+        className="h-6 w-auto"
+        />
       </div>
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex items-start justify-between">
@@ -21,7 +25,7 @@ const Footer = () => {
             >
               algoritmica@contact.com
             </a>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm text-gray-500">
               © 2025 Audita. Todos los derechos reservados.
             </p>
           </div>
