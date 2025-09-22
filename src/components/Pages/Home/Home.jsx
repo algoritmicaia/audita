@@ -18,6 +18,7 @@ import { TitleWithParagraph } from "../../Ui/TitleWithParagraph";
 import { StepSection } from "../../Ui/StepSection";
 import Button from "../../Ui/Button";
 import Footer from "../../Ui/Footer";
+import { MailSection } from "./MailSection";
 
 export const Home = () => {
   return (
@@ -273,6 +274,7 @@ para presentar en tu empresa."
           imageAlt="Pantalla de iLovePDF mostrando la opción para subir PDF"
         />
       </div>
+      <MailSection />
 
       <Footer />
     </>
